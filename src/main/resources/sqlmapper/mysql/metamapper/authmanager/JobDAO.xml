@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="JobDAO">
+
+	<resultMap type="jobVO" id="jobInfo">
+	
+		<result property="jobNo" column="JOB_NO" />
+		<result property="jobName" column="JOB_NM" />
+		
+		<result property="jobStatus" column="JOB_STATUS" />
+		<result property="jobData" column="JOB_DATA" />
+
+		<result property="regDate" column="REG_DT" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+		<result property="regUserId" column="REG_USER_ID" />
+		<result property="endDate" column="END_DT" jdbcType="TIMESTAMP" javaType="java.util.Date" />
+		
+		<result property="runAmount" column="RUN_AMOUNT" />
+		
+		<result property="clientId" column="CLIENT_ID" />
+	
+		<result property="clientCount" column="CLIENT_COUNT" />
+		<result property="compCount" column="COMP_COUNT" />
+		<result property="errorCount" column="ERROR_COUNT" />
+		<result property="runCount" column="RUN_COUNT" />
+		<result property="runCount" column="RUN_COUNT" />
+		<result property="cancelCount" column="CANCEL_COUNT" />
+
+	</resultMap>
+
+	<!-- 작업 마스터 등록 -->
+	<insert id="insertJobMaster" parameterType="jobVO">
+		<selectKey keyProperty="jobNo" resultType="string" order="BEFORE">
+			SELECT GRNEXTVAL('JOBNO_SEQ')
+		</selectKey>
+		INSERT INTO JOB_MSTR
+			(JOB_NO, JOB_NM, JOB_TP, JOB_DATA, REG_USER_ID, REG_DT)
+		VALUES (
+			#{jobNo},
+			#{jobName},
+			'',
+			#{jobData},
+			#{regUserId},
+			now(6)
+		);
+	</insert>
+	
+	<!-- 작업 타겟 등록 -->
+	<insert id="insertJobTarget" parameterType="jobVO">
+		INSERT INTO JOB_TRGT
+			(JOB_NO, CLIENT_ID, JOB_STAT, MOD_USER_ID, MOD_DT)
+		VALUES (
+			#{jobNo},
+			#{clientId},
+			'R',
+			#{regUserId},
+			now(6)
+		);
+	</insert>
+	
+</mapper>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="tokenDAO">
+
+	<resultMap id="TokenListMap" type="userTokenVO" >
+		<result property="token" column="token"/>
+		<result property="userId" column="user_id"/>
+		<result property="expirationDt" column="expiration_dt"/>
+		<result property="statusCd" column="status_cd"/>
+		<result property="authAllowCnt" column="auth_allow_cnt"/>
+		<result property="authCnt" column="auth_cnt"/>
+		<result property="clientId" column="client_id"/>
+		<result property="modDt" column="mod_dt"/>
+		<result property="nfcSecretData" column="nfc_secret_data"/>
+	</resultMap>
+	
+	<sql id="include_SelectTokenListResult">
+ 		ut.token, ut.user_id, ut.expiration_dt, ut.status_cd, ut.auth_allow_cnt, ut.auth_cnt, ut.client_id, ut.mod_dt
+	</sql>
+    
+    <select id="selectTokenList" parameterType="map" resultMap="TokenListMap">
+	    SELECT <include refid="include_SelectTokenListResult"/>, um.nfc_secret_data
+		FROM user_token ut, user_mstr um
+		WHERE ut.user_id = #{userId}
+				AND um.user_id = ut.user_id
+			<if test="clientId != null">
+				AND ut.client_id = #{clientId}
+			</if>
+			<if test="statusCd != null">
+				AND ut.status_cd = #{statusCd}
+			</if>
+    </select>
+    
+    <select id="selectTokenInfo" parameterType="map" resultMap="TokenListMap">
+	    SELECT <include refid="include_SelectTokenListResult"/>, um.nfc_secret_data
+		FROM user_token ut, user_mstr um
+		WHERE ut.client_id = #{clientId} 
+				AND ut.token = #{token}
+				AND um.user_id = ut.user_id
+			<if test="statusCd != null">
+				AND ut.status_cd = #{statusCd}
+			</if>
+    </select>
+    
+    <insert id="insertTokenInfo" parameterType="map">
+    	<if test="tokenList.size > 0">
+			INSERT INTO user_token (
+				token
+				,user_id
+				,expiration_dt
+				,status_cd
+				,auth_allow_cnt
+				,auth_cnt
+				,client_id
+				,gcsp_id
+				,mod_dt	 
+			) VALUES
+			<foreach item="token" collection="tokenList" separator=",">
+			(
+				 #{token.token}
+				, #{token.userId}
+				, #{token.expirationDt}
+				, #{token.statusCd}
+				, #{token.authAllowCnt}
+				, #{token.authCnt}
+				, #{token.clientId}
+				, #{token.gcspId}
+				, SYSDATE()
+			)
+			</foreach>
+		</if>
+	</insert>
+
+	<update id="updateTokenInfo" parameterType="tokenVO">
+		UPDATE user_token
+		SET 
+			mod_dt = SYSDATE()
+			<if test="expirationDt != null">
+				AND expiration_dt = #{expirationDt}
+			</if>
+			<if test="statusCd != null">
+				AND status_cd = #{statusCd}
+			</if>
+			<if test="authAllowCnt != null">
+				AND auth_allow_cnt = #{authAllowCnt}
+			</if>
+			<if test="authCnt != null">
+				AND auth_cnt = #{authCnt}
+			</if>
+		WHERE user_id = #{userId}
+			<if test="clientId != null">
+				AND client_id = #{clientId}
+			</if>
+		 	<if test="token != null">
+				AND token = #{token}
+			</if>
+		 	<if test="statusCd != null">
+				AND status_cd = #{statusCd}
+			</if>
+	</update>
+	
+	<update id="updateOtpTokenInfo">
+		UPDATE user_token 
+		SET 
+			status_cd = IF (auth_allow_cnt > auth_cnt AND expiration_dt > SYSDATE(), status_cd, #{statusCd}),
+			auth_cnt = IF (auth_allow_cnt > auth_cnt AND expiration_dt > SYSDATE(), auth_cnt + 1, auth_cnt)
+		WHERE token = #{token}
+				AND status_cd = #{currntStatusCd}
+			<if test="gcspId != null">
+				AND gcsp_id = #{gcspId}
+			</if>
+	</update>
+	
+	<delete id="deleteToken" parameterType="map">
+		DELETE FROM USER_TOKEN
+				WHERE USER_ID = #{userId} 
+						AND CLIENT_ID IN (       
+		SELECT BB.CLIENT_ID ALL_CLIENT
+		FROM (SELECT T.CLIENT_ID
+		      FROM CLIENT_MSTR T
+		           LEFT JOIN CLIENT_ACCESS CA ON T.CLIENT_ID = CA.CLIENT_ID
+		      WHERE CAST(
+		               COALESCE(TIMESTAMPDIFF(SECOND, CA.CHECK_DT, NOW()), '360') AS UNSIGNED) &lt; (CA.POLLING_TIME+10)) AA
+		     RIGHT JOIN (SELECT DISTINCT CLIENT_ID
+		                 FROM USER_TOKEN
+		                 WHERE USER_ID = #{userId}) BB
+		        ON AA.CLIENT_ID = BB.CLIENT_ID
+		WHERE AA.CLIENT_ID IS NULL
+		UNION SELECT #{clientId}
+		)
+	</delete>
+	
+	<delete id="deleteTokenByTokenId" parameterType="map">
+		DELETE FROM user_token
+		WHERE user_id = #{userId} 
+				AND token = #{token}
+	</delete>
+
+</mapper>
+
+
+

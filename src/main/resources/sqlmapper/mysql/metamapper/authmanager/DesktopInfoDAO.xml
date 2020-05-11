@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="desktopInfoDAO">
+
+	<resultMap id="DesktopInfoListMap" type="desktopInfoVO" >
+		<result property="confId" column="conf_id"/>
+		<result property="confNm" column="conf_nm"/>
+		<result property="confInfo" column="conf_info" />
+		<result property="themeId" column="theme_id"/>
+		<result property="themeNm" column="theme_nm"/>
+		<result property="wallpaperNm" column="wallpaper_nm"/>
+		<result property="wallpaperFile" column="file_nm"/>
+		<result property="modUserId" column="mod_user_id"/>
+		<result property="modDt" column="mod_dt"/>
+		<result property="regUserId" column="reg_user_id"/>
+		<result property="regDt" column="reg_dt"/>
+		
+		<collection property="apps" column="{confId=conf_id,themeId=theme_id}" javaType="java.util.ArrayList" ofType="desktopAppVO" select="selectDesktopApps" />
+		<collection property="mounts" column="{confId=conf_id,themeId=theme_id}" javaType="java.util.ArrayList" ofType="desktopMountVO" select="selectDesktopMounts" />
+	</resultMap>
+	
+	<resultMap id="DesktopAppListMap" type="desktopAppVO" >
+		<result property="desktopId" column="app_id"/>
+		<result property="desktopGubun" column="app_gubun"/>
+		<result property="position" column="app_position"/>
+		<result property="order" column="app_order" />
+		<result property="themeId" column="theme_id"/>
+		
+		<association property="desktop" column="{appId=app_id,themeId=theme_id}" javaType="kr.gooroom.gpms.glm.service.DesktopAppInfoVO" select="selectAppInfo"/>
+	</resultMap>
+
+	<resultMap id="DesktopAppInfoMap" type="desktopAppInfoVO" >
+		<result property="name" column="APP_NM"/>
+		<result property="comment" column="APP_INFO"/>
+		<result property="exec" column="APP_EXEC" />
+		<result property="iconGubun" column="ICON_GUBUN" />
+		<result property="icon" column="ICON_INFO" />
+	</resultMap>
+
+	<resultMap id="DesktopMountListMap" type="desktopMountVO" >
+		<result property="name" column="APP_NM"/>
+		<result property="protocol" column="PROTOCOL"/>
+		<result property="url" column="MOUNT_URL" />
+		<result property="mountpoint" column="MOUNT_POINT" />
+	</resultMap>
+	
+	<sql id="include_SelectDesktopInfoListResult">
+ 		conf_id, conf_nm, conf_info, theme_id, mod_user_id, mod_dt, reg_user_id, reg_dt
+	</sql>
+    
+    <select id="selectDesktopInfoList" parameterType="map" resultMap="DesktopInfoListMap">
+		SELECT aa.conf_id, aa.conf_nm, aa.conf_info, aa.theme_id, aa.mod_user_id, aa.mod_dt, aa.reg_user_id, aa.reg_dt, tm.theme_nm, wm.wallpaper_nm, fm.file_nm
+		FROM ( 
+			SELECT <include refid="include_SelectDesktopInfoListResult"/>
+			FROM desktop_conf_info 
+			WHERE conf_id = #{confId}
+		) aa left join theme_mstr tm on tm.theme_id=aa.theme_id
+      		left join wallpaper_mstr wm on wm.wallpaper_id=tm.wallpaper
+      		left join file_mstr fm on wm.file_no=fm.file_no
+      		limit 1
+    </select>
+
+    <select id="selectDesktopInfoByName" parameterType="map" resultMap="DesktopInfoListMap">
+		SELECT aa.conf_id, aa.conf_nm, aa.conf_info, aa.theme_id, aa.mod_user_id, aa.mod_dt, aa.reg_user_id, aa.reg_dt, tm.theme_nm, wm.wallpaper_nm, fm.file_nm
+		FROM ( 
+			SELECT <include refid="include_SelectDesktopInfoListResult"/>
+			FROM desktop_conf_info 
+			WHERE conf_nm = #{confName}
+		) aa left join theme_mstr tm on tm.theme_id=aa.theme_id
+      		left join wallpaper_mstr wm on wm.wallpaper_id=tm.wallpaper
+      		left join file_mstr fm on wm.file_no=fm.file_no
+      		limit 1
+    </select>
+
+    <select id="selectDesktopInfoByUserAndClient" parameterType="map" resultMap="DesktopInfoListMap">
+		SELECT aa.conf_id, aa.conf_nm, aa.conf_info, aa.theme_id, aa.mod_user_id, aa.mod_dt, aa.reg_user_id, aa.reg_dt, tm.theme_nm, wm.wallpaper_nm, fm.file_nm
+		FROM ( 
+			SELECT <include refid="include_SelectDesktopInfoListResult"/>
+			FROM desktop_conf_info 
+			WHERE conf_id = (
+				SELECT CONF_ID FROM (
+				SELECT CONF_ID
+				FROM GR_GROUP_RULE_CONF RC JOIN CLIENT_MSTR CM ON RC.GRP_ID = CM.GRP_ID
+				WHERE CM.CLIENT_ID=#{clientId} AND RC.CONF_TP='DESKTOPCONF'
+				UNION
+				SELECT CONF_ID
+				FROM GR_USER_RULE_CONF RC 
+				WHERE RC.USER_ID=#{userId} AND RC.CONF_TP='DESKTOPCONF'
+				UNION
+				SELECT CONF_ID
+				FROM GR_DEPT_RULE_CONF RC JOIN USER_MSTR UM ON RC.DEPT_CD = UM.DEPT_CD
+				WHERE UM.USER_ID=#{userId} AND RC.CONF_TP='DESKTOPCONF'
+				UNION
+				SELECT 'DECODEFAULT' AS CONF_ID FROM DUAL) AM
+			LIMIT 1)
+		) aa left join theme_mstr tm on tm.theme_id=aa.theme_id
+      		left join wallpaper_mstr wm on wm.wallpaper_id=tm.wallpaper
+      		left join file_mstr fm on wm.file_no=fm.file_no
+      		limit 1
+    </select>
+
+    <select id="selectDesktopApps" resultMap="DesktopAppListMap">
+    	SELECT DAI.APP_ID, DAI.APP_GUBUN, 'bar' AS APP_POSITION, DAC.APP_ORDER, DCI.THEME_ID
+		FROM DESKTOP_APP_INFO DAI
+			LEFT JOIN DESKTOP_CONF_APP DAC ON DAI.APP_ID = DAC.APP_ID
+			LEFT JOIN DESKTOP_CONF_INFO DCI ON DAC.CONF_ID = DCI.CONF_ID
+		WHERE DAC.CONF_ID=#{confId} AND DAI.STATUS_CD='STAT010'
+    </select>
+
+    <select id="selectDesktopMounts" resultMap="DesktopMountListMap">
+    	SELECT DAI.APP_ID, DAI.APP_NM, DAI.MOUNT_URL, DAI.MOUNT_POINT, 'webdav' as PROTOCOL
+		FROM DESKTOP_APP_INFO DAI
+			LEFT JOIN DESKTOP_CONF_APP DAC ON DAI.APP_ID = DAC.APP_ID
+			LEFT JOIN DESKTOP_CONF_INFO DCI ON DAC.CONF_ID = DCI.CONF_ID
+		WHERE DAC.CONF_ID=#{confId} AND DAI.APP_GUBUN='mount' AND DAI.STATUS_CD='STAT010'
+    </select>
+
+    <select id="selectAppInfo" resultMap="DesktopAppInfoMap">
+		SELECT DAI.APP_NM, DAI.APP_INFO, DAI.APP_EXEC, DAI.ICON_GUBUN,
+    		IF(DAI.ICON_GUBUN='FAVICON', DAI.ICON_URL, DAI.ICON_ID
+    			) AS ICON_INFO
+		FROM DESKTOP_APP_INFO DAI
+		WHERE DAI.APP_ID = #{appId} AND DAI.STATUS_CD='STAT010'
+    </select>
+
+
+</mapper>
