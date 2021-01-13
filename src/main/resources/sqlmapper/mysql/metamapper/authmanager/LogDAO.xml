@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="logDAO">
+
+	<insert id="insertLoginHistory" parameterType="loginHistoryVO" >
+		INSERT INTO user_login_hist (
+			HIST_SEQ
+			, user_id
+			, act_tp
+			, client_id
+			, ip
+			, token
+			, response_cd
+			, reg_dt	 
+		)
+		VALUES (
+			(SELECT GRNEXTVAL('USERLOGINHIST_SEQ'))
+			, #{userId}
+			, #{actTp}
+			, #{clientId}
+			, #{ip}
+			, #{token}
+			, #{responseCd}
+			, SYSDATE()
+		)
+	</insert>
+	
+	<insert id="insertUserHistory" parameterType="String" >
+		REPLACE INTO user_hist (
+			user_id
+			, user_nm
+			, user_passwd
+			, login_id, status
+			, first_login_dt
+			, last_login_dt
+			, mod_user_id
+			, mod_dt
+			, nfc_secret_data
+			, last_passwd_ch_dt
+			, user_passwd_status
+		) 
+		SELECT user_id
+			, user_nm
+			, user_passwd
+			, login_id
+			, status
+			, first_login_dt
+			, last_login_dt
+			, mod_user_id
+			, mod_dt
+			, nfc_secret_data
+			, last_passwd_ch_dt
+			, user_passwd_status 
+		FROM user_mstr 
+		WHERE user_id = #{loginId}
+	</insert>
+		
+
+</mapper>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration	PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+	<properties>
+	</properties>
+	
+	<typeAliases>
+		<typeAlias alias="authVO" type="kr.gooroom.gpms.glm.service.PamLoginInfoVO" />
+		<typeAlias alias="userVO" type="kr.gooroom.gpms.glm.service.UserVO" />
+		<typeAlias alias="userListVO" type="kr.gooroom.gpms.glm.service.UserListVO" />
+		<typeAlias alias="userTokenVO" type="kr.gooroom.gpms.glm.service.UserTokenVO" />
+		<typeAlias alias="tokenVO" type="kr.gooroom.gpms.glm.service.TokenVO" />
+
+		<typeAlias alias="desktopInfoVO" type="kr.gooroom.gpms.glm.service.DesktopInfoVO" />
+		<typeAlias alias="desktopAppVO" type="kr.gooroom.gpms.glm.service.DesktopAppVO" />
+		<typeAlias alias="desktopMountVO" type="kr.gooroom.gpms.glm.service.DesktopMountVO" />
+		<typeAlias alias="desktopAppInfoVO" type="kr.gooroom.gpms.glm.service.DesktopAppInfoVO" />
+
+		<typeAlias alias="gcspVO" type="kr.gooroom.gpms.glm.service.GcspVO" />
+		<typeAlias alias="loginHistoryVO" type="kr.gooroom.gpms.glm.service.LoginHistoryVO" />
+		<typeAlias alias="ctrlItemVO" type="kr.gooroom.gpms.glm.service.CtrlItemVO" />
+
+		<typeAlias alias="dupClientVO" type="kr.gooroom.gpms.glm.service.DupClientVO" />
+		<typeAlias alias="jobVO" type="kr.gooroom.gpms.job.service.JobVO" />
+		
+	</typeAliases>
+	
+</configuration>

@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="authDAO">
+
+	<resultMap id="UserInfoMap" type="userVO" >
+		<result property="userId" column="user_id"/>
+		<result property="userNm" column="user_nm"/>
+		<result property="loginId" column="login_id"/>
+		<result property="status" column="status"/>
+		<result property="firstLoginDt" column="first_login_dt"/>
+		<result property="lastLoginDt" column="last_login_dt"/>
+		<result property="modUserId" column="mod_user_id"/>
+		<result property="modDt" column="mod_dt"/>
+		<result property="nfcSecretData" column="nfc_secret_data"/>
+		<result property="lastPasswdChDt" column="last_passwd_ch_dt"/>
+		<result property="userPasswdStatus" column="user_passwd_status"/>
+		<result property="expireDt" column="expire_dt"/>
+		<result property="expireRemainDay" column="expire_remain_day"/>
+		<result property="deptExpireDt" column="dept_expite_dt"/>
+		<result property="deptExpireRemainDay" column="dept_expire_remain_day"/>
+		<result property="pwdExpireDt" column="pwd_expite_dt"/>
+		<result property="pwdExpireRemainDay" column="pwd_expire_remain_day"/>
+		<result property="loginTrial" column="login_trial"/>
+		<result property="loginElapsedTime" column="login_elapsed_time"/>
+		<result property="userEmail" column="user_email"/>
+		<result property="isPasswdExpire" column="is_passwd_expire"/>
+	</resultMap>
+	
+	<resultMap id="UserListMap" type="userListVO" >
+		<result property="loginId" column="login_id"/>
+		<result property="userNm" column="user_nm"/>
+		<result property="status" column="status"/>
+	</resultMap>
+
+	<resultMap id="DupClientMap" type="dupClientVO" >
+		<result property="clientId" column="CLIENT_ID"/>
+		<result property="clientNm" column="CLIENT_NM"/>
+		<result property="ip" column="IP"/>
+		<result property="localIp" column="LOCAL_IP"/>
+	</resultMap>
+	
+	
+	<sql id="include_SelectUserInfoResult">
+ 		um.user_id, um.user_nm, um.login_id, um.status, um.first_login_dt, um.last_login_dt, 
+ 		um.mod_user_id, um.mod_dt, um.nfc_secret_data, um.last_passwd_ch_dt, um.user_passwd_status, 
+ 		um.expire_dt, DATEDIFF(um.expire_dt, now()) as expire_remain_day,
+ 		um.passwd_expire_dt pwd_expite_dt, DATEDIFF(um.passwd_expire_dt, now()) as pwd_expire_remain_day,
+ 		IFNULL(um.login_trial, '0') login_trial, um.login_trial_dt, 
+ 		TIMESTAMPDIFF(MINUTE, um.login_trial_dt, now()) login_elapsed_time, 
+ 		user_email, IF(IFNULL(DATEDIFF(um.passwd_expire_dt, now()), 999) > 0, 'N', 'Y') as is_passwd_expire
+	</sql>
+	
+	<sql id="include_SelectUserListResult">
+ 		um.login_id, um.user_nm, um.status
+	</sql>
+    
+    <select id="selectUserInfo" parameterType="map" resultMap="UserInfoMap">
+	    SELECT
+ 		um.user_id, um.user_nm, um.login_id, um.status, um.first_login_dt, um.last_login_dt, 
+ 		um.mod_user_id, um.mod_dt, um.nfc_secret_data, um.last_passwd_ch_dt, um.user_passwd_status, 
+ 		um.expire_dt, DATEDIFF(um.expire_dt, now()) as expire_remain_day,
+		dm.expire_dt dept_expite_dt, DATEDIFF(dm.expire_dt, now()) as dept_expire_remain_day,
+		um.passwd_expire_dt pwd_expite_dt, DATEDIFF(um.passwd_expire_dt, now()) as pwd_expire_remain_day,
+ 		IFNULL(um.login_trial, '0') login_trial, um.login_trial_dt, 
+ 		TIMESTAMPDIFF(MINUTE, um.login_trial_dt, now()) login_elapsed_time, 
+ 		user_email, IF(IFNULL(DATEDIFF(um.passwd_expire_dt, now()), 999) > 0, 'N', 'Y') as is_passwd_expire
+		FROM user_mstr um left join dept_mstr dm on um.dept_cd = dm.dept_cd	 
+		WHERE login_id = #{loginId} 
+    </select>
+    
+    <select id="selectUserList" parameterType="map" resultMap="UserListMap">
+	    SELECT <include refid="include_SelectUserListResult"/>
+		FROM user_mstr um
+		WHERE login_id IN
+			<foreach item="loginId" index="index" collection="loginIds" open="(" separator="," close=")">
+				#{loginId}
+			</foreach> 
+    </select>
+    
+    <select id="selectCheckAuth" parameterType="map" resultMap="UserListMap">
+	    SELECT <include refid="include_SelectUserListResult"/>
+		FROM user_mstr um	 
+		WHERE login_id = #{loginId} 
+			AND user_passwd = SHA2(#{userPasswd}, 256)
+			<if test="status != null">
+				AND status = #{status}
+			</if>
+    </select>
+    
+    <update id="updateLoginTrial" parameterType="map">
+  		UPDATE USER_MSTR SET LOGIN_TRIAL = (LOGIN_TRIAL-1), LOGIN_TRIAL_DT = now() WHERE USER_ID=#{loginId}
+	</update>
+
+    <update id="updateLoginTrialInit" parameterType="map">
+  		UPDATE USER_MSTR SET LOGIN_TRIAL = (SELECT TRIAL_COUNT FROM SITE_MSTR LIMIT 1)
+	</update>
+
+    <update id="updateUserLoginTrialInit" parameterType="map">
+  		UPDATE USER_MSTR SET LOGIN_TRIAL = (SELECT TRIAL_COUNT FROM SITE_MSTR LIMIT 1) WHERE USER_ID=#{loginId}
+	</update>
+
+    <select id="selectLoginTrial" parameterType="map" resultType="long">
+   		select LOGIN_TRIAL FROM USER_MSTR WHERE USER_ID = #{loginId}
+	</select>
+    
+    <select id="selectCheckAuthByOtpToken" parameterType="map" resultMap="UserInfoMap">
+	    SELECT <include refid="include_SelectUserInfoResult"/>
+    	FROM user_mstr um, 
+		(SELECT t.user_id, t.status_cd
+						FROM user_token t
+						WHERE t.token = #{token}
+							AND t.status_cd = #{statusCd}
+						<if test="gcspId != null">
+							AND t.gcsp_id = #{gcspId}
+						</if>
+						<if test="clientId != null">
+							AND t.client_id = #{clientId}
+						</if>
+						) as ut
+		WHERE um.user_id = ut.user_id;
+    </select>
+    
+    <resultMap id="GcspListMap" type="gcspVO" >
+		<result property="gcspId" column="gcsp_id"/>
+		<result property="gcspNm" column="gcsp_nm"/>
+		<result property="statusCd" column="status_cd"/>
+		<result property="expirationYmd" column="expiration_ymd"/>
+		<result property="ipRanges" column="ip_ranges"/>
+		<result property="url" column="url"/>
+		<result property="comment" column="comment"/>
+		<result property="modUserId" column="mod_user_id"/>
+		<result property="modDt" column="mod_dt"/>
+		<result property="regUserId" column="reg_user_id"/>
+		<result property="regDt" column="reg_dt"/>
+	</resultMap>
+	
+	<sql id="include_SelectGcspListResult">
+ 		gcsp_id, gcsp_nm, status_cd, expiration_ymd, ip_ranges, url, comment, mod_user_id, mod_dt, reg_user_id, reg_dt
+	</sql>
+    
+    <select id="selectGcspInfo" parameterType="map" resultMap="GcspListMap">
+	    SELECT <include refid="include_SelectGcspListResult"/>
+    	FROM gcsp_mstr
+		WHERE gcsp_id = #{gcspId}
+		<if test="ipRanges != null">
+			AND ip_ranges = #{ipRanges}
+		</if>
+		<if test="statusCd != null">
+			AND status_cd = #{statusCd}
+		</if>
+		
+    </select>
+    
+    <update id="updatePassword" parameterType="map">
+		UPDATE user_mstr
+		SET 
+			user_passwd = SHA2(#{userPasswd}, 256),
+			mod_user_id = #{modUserId},
+			mod_dt = SYSDATE(),
+			user_passwd_status = #{userPasswdStatus},
+			last_passwd_ch_dt = SYSDATE(),
+			passwd_expire_dt = IF(IFNULL(DATEDIFF(passwd_expire_dt, now()), 999) > 0, passwd_expire_dt, null)
+		WHERE login_id = #{loginId}
+	</update>
+	
+	<update id="updateUserNm" parameterType="map">
+		UPDATE user_mstr
+		SET 
+			user_nm = #{userNm},
+			mod_user_id = #{modUserId},
+			mod_dt = SYSDATE()
+		WHERE login_id = #{loginId}
+	</update>
+	
+	<update id="updateLoginDt" parameterType="map">
+		UPDATE user_mstr
+		SET 
+			last_login_dt = SYSDATE()
+			<if test="isFirstLogin != null">
+				, first_login_dt = SYSDATE()
+			</if>
+			<if test="clientId != null">
+				, client_id = #{clientId}
+			</if>
+		WHERE login_id = #{loginId}
+			<if test="userPasswd != null">
+			AND user_passwd = SHA2(#{userPasswd}, 256)
+			</if>
+	</update>
+
+    <select id="selectPassphrase" parameterType="map" resultType="string">
+    	SELECT PASS_PHRASE
+    	FROM CLIENT_CFG
+    	WHERE CLIENT_ID = #{clientId}
+    	AND USER_ID = #{loginId}
+    </select>
+    
+    <insert id="insertOrUpdatePassphrase" parameterType="map">
+		INSERT INTO CLIENT_CFG (CLIENT_ID, USER_ID, PASS_PHRASE, REG_DT) 
+		VALUES (#{clientId}, #{loginId}, #{passphrase}, now())
+		ON DUPLICATE KEY UPDATE PASS_PHRASE=#{passphrase}, REG_DT=now()
+	</insert>
+	
+	<select id="selectOnlineClientsByUser" parameterType="map" resultMap="DupClientMap">
+		SELECT AA.CLIENT_ID, AA.CLIENT_NM, EE.IP, EE.LOCAL_IP
+		FROM (SELECT T.CLIENT_ID, T.CLIENT_NM
+		      FROM CLIENT_MSTR T
+		      LEFT JOIN CLIENT_ACCESS CA ON T.CLIENT_ID = CA.CLIENT_ID
+		      WHERE CAST(COALESCE(TIMESTAMPDIFF(SECOND, CA.CHECK_DT, NOW()), '360') AS UNSIGNED) &lt; (CA.POLLING_TIME+10)
+		  ) AA
+		RIGHT JOIN (SELECT DISTINCT CLIENT_ID FROM USER_TOKEN WHERE USER_ID = #{loginId}) BB
+		ON AA.CLIENT_ID = BB.CLIENT_ID
+		JOIN CLIENT_EXT EE
+		ON AA.CLIENT_ID = EE.CLIENT_ID
+		WHERE AA.CLIENT_ID IS NOT NULL
+	</select>
+	
+	<select id="selectPasswordRule" parameterType="string" resultType="string">
+    	SELECT PASSWORD_RULE
+    	FROM SITE_MSTR LIMIT 1
+    </select>
+
+	<select id="selectLockTimeValue" parameterType="string" resultType="int">
+    	SELECT IFNULL(LOCK_TIME, 0)
+    	FROM SITE_MSTR LIMIT 1
+    </select>
+
+	<select id="selectIsEnableDuplicateLogin" parameterType="string" resultType="int">
+    	SELECT IFNULL(ENABLE_DUPLOGIN, -1)
+    	FROM SITE_MSTR LIMIT 1
+    </select>
+
+</mapper>

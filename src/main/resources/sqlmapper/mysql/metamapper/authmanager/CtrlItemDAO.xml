@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ctrlItemDAO">
+
+	<resultMap id="CtrlItemMap" type="ctrlItemVO" >
+		<result property="objId" column="obj_id"/>
+		<result property="propId" column="prop_id"/>
+		<result property="propNm" column="prop_nm"/>
+		<result property="propValue" column="prop_value"/>
+		<result property="link" column="link"/>
+		<result property="modUserId" column="mod_user_id"/>
+		<result property="modDt" column="mod_dt"/>
+	</resultMap>
+	
+	<sql id="include_SelectCtrlItemResult">
+ 		cip.obj_id, cip.prop_id, cip.prop_nm, cip.prop_value, cip.link, cip.mod_dt, cip.mod_user_id
+	</sql>
+	
+    <select id="selectCtrlItem" parameterType="map" resultMap="CtrlItemMap">
+	    SELECT <include refid="include_SelectCtrlItemResult"/>
+		FROM CTRL_ITEM_PROP CIP JOIN (
+  			SELECT CONF_ID FROM (
+  				SELECT CONF_ID
+				FROM GR_GROUP_RULE_CONF RC JOIN CLIENT_MSTR CM ON RC.GRP_ID = CM.GRP_ID
+				WHERE CM.CLIENT_ID=#{clientId} AND RC.CONF_TP='SECURITYRULE'
+				UNION
+				SELECT CONF_ID
+				FROM GR_USER_RULE_CONF RC
+				WHERE RC.USER_ID=#{loginId} AND RC.CONF_TP='SECURITYRULE'
+				UNION
+				SELECT CONF_ID
+				FROM GR_DEPT_RULE_CONF RC JOIN USER_MSTR UM ON RC.DEPT_CD = UM.DEPT_CD
+				WHERE UM.USER_ID=#{loginId} AND RC.CONF_TP='SECURITYRULE'
+				UNION
+				SELECT 'GSRUDEFAULT' AS CONF_ID FROM DUAL
+				) AM LIMIT 1
+			) GD ON CIP.OBJ_ID = GD.CONF_ID AND (CIP.PROP_NM='password_time' OR CIP.PROP_NM='screen_time')
+    </select>
+    
+    <select id="selectAvailableIpRule" parameterType="map" resultMap="CtrlItemMap">
+	    SELECT CIP.PROP_NM, CIP.PROP_VALUE FROM CTRL_ITEM_PROP CIP JOIN (
+		SELECT IFNULL(MIN(GGRC.CONF_ID), 'CLCFDEFAULT') AS CONF_ID 
+		FROM GR_GROUP_RULE_CONF GGRC JOIN CLIENT_MSTR CM ON GGRC.GRP_ID = CM.GRP_ID
+		AND CM.CLIENT_ID = #{clientId}
+		WHERE GGRC.CONF_TP='CLIENTCONF') CC ON CIP.OBJ_ID=CC.CONF_ID AND CIP.PROP_NM IN ('WHITEIPALL', 'WHITEIPS');
+    </select>
+
+</mapper>
