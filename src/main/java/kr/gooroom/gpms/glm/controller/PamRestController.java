@@ -232,11 +232,11 @@ public class PamRestController {
 						
 						
 						// get password rule(compexity) for this site
-						String passwordRule = (String) authService.getPasswordRule("SITEID");
+						String passwordRule = authService.getPasswordRule("SITEID");
 						ObjectMapper mapper = new ObjectMapper();
 						Map<String, Object> passwordRuleVO = new HashMap<String, Object>();
 						// convert JSON string to Map
-						passwordRuleVO = mapper.readValue(passwordRule, new TypeReference<Map<String, String>>() {
+						passwordRuleVO = mapper.readValue(passwordRule, new TypeReference<Map<String, Object>>() {
 						});
 						if (passwordRuleVO != null) {
 							resultData.put("passwordRule", passwordRuleVO);

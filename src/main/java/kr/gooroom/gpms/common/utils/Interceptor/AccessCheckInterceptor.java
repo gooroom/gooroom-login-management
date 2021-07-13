@@ -22,13 +22,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import kr.gooroom.gpms.common.utils.Constant;
 import kr.gooroom.gpms.common.utils.MessageSourceHelper;
 
-public class AccessCheckInterceptor extends HandlerInterceptorAdapter {
+public class AccessCheckInterceptor implements HandlerInterceptor {
 
     private static final Logger logger = LoggerFactory.getLogger(AccessCheckInterceptor.class);
 
@@ -66,8 +66,8 @@ public class AccessCheckInterceptor extends HandlerInterceptorAdapter {
 	    throw new Exception(MessageSourceHelper.getMessage("common.msg.fail"));
 	}
 
-	return super.preHandle(request, response, handler);
-    }
+	return true;
+	}
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,

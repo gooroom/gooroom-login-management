@@ -381,7 +381,7 @@ public class AuthServiceImpl implements AuthService {
 				paramMap.clear();
 				paramMap.put("loginId", userVO.getLoginId());
 				paramMap.put("clientId", clientId);
-				List<CtrlItemVO> ctrlItems = (List<CtrlItemVO>) ctrlItemDAO.selectCtrlItem(paramMap);
+				List<CtrlItemVO> ctrlItems = ctrlItemDAO.selectCtrlItem(paramMap);
 
 				// 리턴 정보 생성
 				PamLoginInfoVO loginInfoVO = new PamLoginInfoVO();
