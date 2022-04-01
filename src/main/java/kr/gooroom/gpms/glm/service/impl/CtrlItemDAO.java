@@ -44,14 +44,14 @@ public class CtrlItemDAO extends SqlSessionMetaDAO {
      * @return
      * @throws Exception
      */
-    public List<?> selectCtrlItem(Map<?, ?> paramMap) throws Exception {
+    public List<CtrlItemVO> selectCtrlItem(Map<?, ?> paramMap) throws Exception {
 	return sqlSessionMeta.selectList("ctrlItemDAO.selectCtrlItem", paramMap);
     }
 
     /**
      * 컨트롤 아이템 조회
      * 
-     * @param paramMap
+     * @param clientId String
      * @return
      * @throws Exception
      */

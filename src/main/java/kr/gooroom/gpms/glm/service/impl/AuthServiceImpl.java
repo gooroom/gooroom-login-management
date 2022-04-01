@@ -91,6 +91,12 @@ public class AuthServiceImpl implements AuthService {
 			return null;
 		}
 
+		// check user status normal or delete
+		if(userVO.getStatus().equals(Constant.COMMON_STATUS_DELETE)) {
+			userVO.setCheckCd(Constant.RSP_CODE_AUTH_FAIL_DELETE_USER);
+			return userVO;
+		}
+
 		// check user auth (password)
 		paramMap.put("userPasswd", userPw);
 		paramMap.put("status", Constant.COMMON_STATUS_OK);
@@ -375,7 +381,7 @@ public class AuthServiceImpl implements AuthService {
 				paramMap.clear();
 				paramMap.put("loginId", userVO.getLoginId());
 				paramMap.put("clientId", clientId);
-				List<CtrlItemVO> ctrlItems = (List<CtrlItemVO>) ctrlItemDAO.selectCtrlItem(paramMap);
+				List<CtrlItemVO> ctrlItems = ctrlItemDAO.selectCtrlItem(paramMap);
 
 				// 리턴 정보 생성
 				PamLoginInfoVO loginInfoVO = new PamLoginInfoVO();

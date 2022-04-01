@@ -79,6 +79,7 @@ public class Constant {
     public static final String RSP_CODE_AUTH_FAIL = "ELM000AUTHF";
     public static final String RSP_CODE_AUTH_FAIL_NOTEXIST_ID = "ELM001AUTHF";
     public static final String RSP_CODE_AUTH_FAIL_INVALID_PW = "ELM002AUTHF";
+    public static final String RSP_CODE_AUTH_FAIL_DELETE_USER = "ELM003AUTHF";
     public static final String RSP_CODE_AUTH_EXPIRED = "ELM005AUTHF";
 
     public static final String RSP_CODE_AUTH_FAIL_NOTEXIST_IPRULE = "ELM006AUTHF";

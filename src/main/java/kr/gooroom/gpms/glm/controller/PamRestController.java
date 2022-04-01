@@ -68,7 +68,7 @@ import kr.gooroom.gpms.job.CustomJobMaker;
 /**
  * Handles requests for the Gooroom's PAM service, authorization management
  * process.
- *
+ * 
  * @author HNC
  * @version 1.0
  * @since 1.8
@@ -103,7 +103,7 @@ public class PamRestController {
 
 	/**
 	 * check client certificate and produce client id, client ip.
-	 *
+	 * 
 	 * @param req HttpServletRequest @param res HttpServletResponse @param model
 	 *            ModelMap @return Map result @throws
 	 */
@@ -151,7 +151,7 @@ public class PamRestController {
 	}
 
 	private CommonResultVO processAuth(String loginId, String userPw, String clientCert, String clientIp,
-									   boolean isOnlyConfirm) throws Exception {
+			boolean isOnlyConfirm) throws Exception {
 
 		CommonResultVO result = new CommonResultVO();
 		// 1. check client cert, and get client id from cert
@@ -184,7 +184,7 @@ public class PamRestController {
 			if (StringUtils.equals(userVO.getCheckCd(), Constant.RSP_CODE_OK)) {
 
 				Map<String, Object> resultData = new HashMap<>();
-
+				
 				if (!isOnlyConfirm) {
 					try {
 						// get duplicate online client list by user
@@ -219,7 +219,7 @@ public class PamRestController {
 
 						// 로그인 시간 업데이트
 						authService.updateLoginDateTime(loginId, null, (userVO.getFirstLoginDt() == null), clientId);
-
+						
 						List<?> userTokenList = tokenService.selectTokenListByClientId(loginId, clientId, null);
 						if (userTokenList != null && userTokenList.size() > 0) {
 							// delete token data that created before
@@ -229,14 +229,14 @@ public class PamRestController {
 						// ########################## CREATE TOKEN ###########################
 						// create token and desktop information
 						resultData = authService.setPamTokenAndDesktopInfo(userVO, clientId, clientIp);
-
-
+						
+						
 						// get password rule(compexity) for this site
-						String passwordRule = (String) authService.getPasswordRule("SITEID");
+						String passwordRule = authService.getPasswordRule("SITEID");
 						ObjectMapper mapper = new ObjectMapper();
 						Map<String, Object> passwordRuleVO = new HashMap<String, Object>();
 						// convert JSON string to Map
-						passwordRuleVO = mapper.readValue(passwordRule, new TypeReference<Map<String, String>>() {
+						passwordRuleVO = mapper.readValue(passwordRule, new TypeReference<Map<String, Object>>() {
 						});
 						if (passwordRuleVO != null) {
 							resultData.put("passwordRule", passwordRuleVO);
@@ -331,6 +331,13 @@ public class PamRestController {
 				result.setSuccess(false);
 				return result;
 
+			} else if (StringUtils.equals(userVO.getCheckCd(), Constant.RSP_CODE_AUTH_FAIL_DELETE_USER)) {
+
+				result.setResultCode(Constant.RSP_CODE_AUTH_FAIL_DELETE_USER);
+				result.setResultMessage(MessageSourceHelper.getMessage("common.msg.auth.fail.delete.user"));
+				result.setSuccess(false);
+				return result;
+
 			} else {
 
 				result.setResultCode(Constant.RSP_CODE_AUTH_FAIL);
@@ -397,15 +404,15 @@ public class PamRestController {
 
 	/**
 	 * authorization user login with login id and password.
-	 *
+	 * 
 	 * @param loginId String login id @param userPw String user password @param req
 	 *                HttpServletRequest @param res HttpServletResponse @param model
 	 *                ModelMap @return Map result @throws
 	 */
 	@RequestMapping(value = "/auth", method = { RequestMethod.POST })
 	public @ResponseBody Map<?, ?> authPAM(@RequestParam(value = "user_id", required = false) String loginId,
-										   @RequestParam(value = "user_pw", required = false) String userPw, HttpServletRequest req,
-										   HttpServletResponse res, ModelMap model) throws Exception {
+			@RequestParam(value = "user_pw", required = false) String userPw, HttpServletRequest req,
+			HttpServletResponse res, ModelMap model) throws Exception {
 
 		String clientCert = req.getHeader(Constant.H_CERT);
 		String clientIp = req.getHeader(Constant.H_REALIP);
@@ -494,15 +501,15 @@ public class PamRestController {
 
 	/**
 	 * authorization user login with login id and password for confirm.
-	 *
+	 * 
 	 * @param loginId String login id @param userPw String user password @param req
 	 *                HttpServletRequest @param res HttpServletResponse @param model
 	 *                ModelMap @return Map result @throws
 	 */
 	@RequestMapping(value = "/authconfirm", method = { RequestMethod.POST })
 	public @ResponseBody Map<?, ?> authConfirmPAM(@RequestParam(value = "user_id", required = false) String loginId,
-												  @RequestParam(value = "user_pw", required = false) String userPw, HttpServletRequest req,
-												  HttpServletResponse res, ModelMap model) throws Exception {
+			@RequestParam(value = "user_pw", required = false) String userPw, HttpServletRequest req,
+			HttpServletResponse res, ModelMap model) throws Exception {
 
 //		System.out.println("############################################################################################");
 //		System.out.println("############################################################################################");
@@ -575,16 +582,16 @@ public class PamRestController {
 
 	/**
 	 * authorization user login with token for NFC media.
-	 *
+	 * 
 	 * @param loginId String login id @param userPw String user password @param req
 	 *                HttpServletRequest @param res HttpServletResponse @param model
 	 *                ModelMap @return Map result @throws
 	 */
 	@RequestMapping(value = "/nfc", method = { RequestMethod.POST })
 	public @ResponseBody Map<?, ?> authNfcData(@RequestParam(value = "login_token", required = false) String loginToken,
-											   @RequestParam(value = "user_id", required = false) String loginId,
-											   @RequestParam(value = "user_pw", required = false) String userPw, HttpServletRequest req,
-											   HttpServletResponse res, ModelMap model) throws Exception {
+			@RequestParam(value = "user_id", required = false) String loginId,
+			@RequestParam(value = "user_pw", required = false) String userPw, HttpServletRequest req,
+			HttpServletResponse res, ModelMap model) throws Exception {
 
 		String clientCert = req.getHeader(Constant.H_CERT);
 		String clientIp = req.getHeader(Constant.H_REALIP);
@@ -665,7 +672,7 @@ public class PamRestController {
 
 	@RequestMapping(value = "/logout", method = { RequestMethod.POST })
 	public @ResponseBody Map<?, ?> logoutPAM(@RequestParam(value = "login_token", required = false) String loginToken,
-											 HttpServletRequest req, HttpServletResponse res, ModelMap model) throws Exception {
+			HttpServletRequest req, HttpServletResponse res, ModelMap model) throws Exception {
 
 		String clientCert = req.getHeader(Constant.H_CERT);
 		String clientIp = req.getHeader(Constant.H_REALIP);
@@ -1042,26 +1049,26 @@ public class PamRestController {
 	}
 
 	private void processMsgForDuplicateLogin(int gubun, String loginId, String emailAddr,
-											 List<DupClientVO> dupClientList) {
+			List<DupClientVO> dupClientList) {
 		if (gubun > 0) {
 			switch (gubun) {
-				case 2:
-					// send mail
-					sendEmailForDuplicateLogin(emailAddr, dupClientList, loginId);
-					break;
-				case 3:
-					// create notify job
-					createNotifyForDuplicateLogin(loginId, dupClientList);
-					break;
-				case 4:
-					// send mail and create notify job
-					sendEmailForDuplicateLogin(emailAddr, dupClientList, loginId);
-					// create notify job
-					createNotifyForDuplicateLogin(loginId, dupClientList);
-					break;
-				default:
-					// default - do nothing.
-					break;
+			case 2:
+				// send mail
+				sendEmailForDuplicateLogin(emailAddr, dupClientList, loginId);
+				break;
+			case 3:
+				// create notify job
+				createNotifyForDuplicateLogin(loginId, dupClientList);
+				break;
+			case 4:
+				// send mail and create notify job
+				sendEmailForDuplicateLogin(emailAddr, dupClientList, loginId);
+				// create notify job
+				createNotifyForDuplicateLogin(loginId, dupClientList);
+				break;
+			default:
+				// default - do nothing.
+				break;
 			}
 		}
 	}
@@ -1116,14 +1123,14 @@ public class PamRestController {
 
 	/**
 	 * authorization user login with login id and password.
-	 *
+	 * 
 	 * @param loginId String login id @param userPw String user password @param req
 	 *                HttpServletRequest @param res HttpServletResponse @param model
 	 *                ModelMap @return Map result @throws
 	 */
 	@RequestMapping(value = "/desktop", method = { RequestMethod.POST })
 	public @ResponseBody Map<?, ?> desktopPAM(@RequestParam(value = "service_name", required = false) String confName,
-											  HttpServletRequest req, HttpServletResponse res, ModelMap model) throws Exception {
+			HttpServletRequest req, HttpServletResponse res, ModelMap model) throws Exception {
 
 //		String clientCert = req.getHeader(Constant.H_CERT);
 //		String clientIp = req.getHeader(Constant.H_REALIP);
