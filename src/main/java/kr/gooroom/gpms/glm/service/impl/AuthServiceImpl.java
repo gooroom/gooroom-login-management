@@ -25,6 +25,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import kr.gooroom.gpms.glm.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,23 +38,6 @@ import kr.gooroom.gpms.common.utils.CommonUtils;
 import kr.gooroom.gpms.common.utils.Constant;
 import kr.gooroom.gpms.common.utils.DesktopUtils;
 import kr.gooroom.gpms.common.utils.Token;
-import kr.gooroom.gpms.glm.service.AuthService;
-import kr.gooroom.gpms.glm.service.CtrlItemVO;
-import kr.gooroom.gpms.glm.service.DesktopAppInfoVO;
-import kr.gooroom.gpms.glm.service.DesktopAppVO;
-import kr.gooroom.gpms.glm.service.DesktopInfoService;
-import kr.gooroom.gpms.glm.service.DesktopInfoVO;
-import kr.gooroom.gpms.glm.service.DupClientVO;
-import kr.gooroom.gpms.glm.service.GcspLoginInfoVO;
-import kr.gooroom.gpms.glm.service.GcspVO;
-import kr.gooroom.gpms.glm.service.LogService;
-import kr.gooroom.gpms.glm.service.LoginHistoryVO;
-import kr.gooroom.gpms.glm.service.PamLoginInfoVO;
-import kr.gooroom.gpms.glm.service.TokenService;
-import kr.gooroom.gpms.glm.service.TokenVO;
-import kr.gooroom.gpms.glm.service.UserListVO;
-import kr.gooroom.gpms.glm.service.UserTokenVO;
-import kr.gooroom.gpms.glm.service.UserVO;
 
 @Service("authService")
 public class AuthServiceImpl implements AuthService {
@@ -432,6 +416,13 @@ public class AuthServiceImpl implements AuthService {
 				loginHistoryVO.setActTp(Constant.LOGIN_ACTION_TYPE_PAM_LOGIN);
 				logService.insertLoginHistory(loginHistoryVO);
 
+				// 사용자 단말 사용이력 추가
+				UserClientUseHistoryVO userClientUseHistoryVO = new UserClientUseHistoryVO();
+				userClientUseHistoryVO.setUserId(userVO.getUserId());
+				userClientUseHistoryVO.setUseClientId(clientId);
+				userClientUseHistoryVO.setActTp(Constant.LOGIN_ACTION_TYPE_PAM_LOGIN);
+				logService.insertOrUpdateUserClientUseHistory(userClientUseHistoryVO);
+
 				return resultData;
 			} else {
 				return null;
@@ -484,6 +475,14 @@ public class AuthServiceImpl implements AuthService {
 			}
 
 			logService.insertLoginHistory(loginHistoryVO);
+
+			// 사용자 단말 사용이력 추가
+			UserClientUseHistoryVO userClientUseHistoryVO = new UserClientUseHistoryVO();
+			userClientUseHistoryVO.setUserId(userVO.getUserId());
+			userClientUseHistoryVO.setUseClientId(clientId);
+			userClientUseHistoryVO.setActTp(loginHistoryVO.getActTp());
+			logService.insertOrUpdateUserClientUseHistory(userClientUseHistoryVO);
+
 		} catch (Exception e) {
 		}
 

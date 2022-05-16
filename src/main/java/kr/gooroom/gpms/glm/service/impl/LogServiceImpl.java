@@ -18,6 +18,7 @@ package kr.gooroom.gpms.glm.service.impl;
 
 import javax.annotation.Resource;
 
+import kr.gooroom.gpms.glm.service.UserClientUseHistoryVO;
 import org.springframework.stereotype.Service;
 
 import kr.gooroom.gpms.glm.service.LogService;
@@ -37,6 +38,11 @@ public class LogServiceImpl implements LogService {
     @Override
     public int insertUserHistory(String loginId) throws Exception {
 	return logDAO.insertUserHistory(loginId);
+    }
+
+    @Override
+    public int insertOrUpdateUserClientUseHistory(UserClientUseHistoryVO userClientUseHistoryVO) throws Exception {
+        return logDAO.insertOrUpdateClientUseHist(userClientUseHistoryVO);
     }
 
 }

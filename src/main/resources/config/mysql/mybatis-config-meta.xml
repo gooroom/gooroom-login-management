@@ -19,6 +19,7 @@
 
 		<typeAlias alias="gcspVO" type="kr.gooroom.gpms.glm.service.GcspVO" />
 		<typeAlias alias="loginHistoryVO" type="kr.gooroom.gpms.glm.service.LoginHistoryVO" />
+		<typeAlias alias="userClientUseHistoryVO" type="kr.gooroom.gpms.glm.service.UserClientUseHistoryVO" />
 		<typeAlias alias="ctrlItemVO" type="kr.gooroom.gpms.glm.service.CtrlItemVO" />
 
 		<typeAlias alias="dupClientVO" type="kr.gooroom.gpms.glm.service.DupClientVO" />

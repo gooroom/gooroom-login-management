@@ -16,6 +16,7 @@
 
 package kr.gooroom.gpms.glm.service.impl;
 
+import kr.gooroom.gpms.glm.service.UserClientUseHistoryVO;
 import org.springframework.stereotype.Repository;
 
 import kr.gooroom.gpms.common.service.dao.SqlSessionMetaDAO;
@@ -53,6 +54,18 @@ public class LogDAO extends SqlSessionMetaDAO {
      */
     public int insertUserHistory(String loginId) throws Exception {
 	return sqlSessionMeta.insert("logDAO.insertUserHistory", loginId);
+    }
+
+
+    /**
+     * 사용자 단말 사용 이력 추가
+     *
+     * @param userClientUseHistoryVO
+     * @return
+     * @throws Exception
+     */
+    public int insertOrUpdateClientUseHist(UserClientUseHistoryVO userClientUseHistoryVO) throws Exception {
+        return sqlSessionMeta.insert("logDAO.insertOrUpdateClientUseHist", userClientUseHistoryVO);
     }
 
 }

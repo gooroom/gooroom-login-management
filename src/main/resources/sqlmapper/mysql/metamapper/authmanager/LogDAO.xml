@@ -55,6 +55,12 @@
 		FROM user_mstr 
 		WHERE user_id = #{loginId}
 	</insert>
-		
+
+	<!-- 사용자 단말 사용이력 추가 -->
+	<insert id="insertOrUpdateClientUseHist" parameterType="userClientUseHistoryVO">
+		INSERT INTO USER_CLIENT_USE_HIST (USER_ID, USE_CLIENT_ID, ACT_TP, REG_DT, ON_LAST_CHECK_DT)
+		VALUES (#{userId}, #{useClientId}, #{actTp}, now(), now())
+			ON DUPLICATE KEY UPDATE ON_LAST_CHECK_DT=now()
+	</insert>
 
 </mapper>
