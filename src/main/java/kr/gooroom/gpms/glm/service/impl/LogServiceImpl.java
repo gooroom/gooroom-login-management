@@ -16,7 +16,7 @@
 
 package kr.gooroom.gpms.glm.service.impl;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import kr.gooroom.gpms.glm.service.UserClientUseHistoryVO;
 import org.springframework.stereotype.Service;

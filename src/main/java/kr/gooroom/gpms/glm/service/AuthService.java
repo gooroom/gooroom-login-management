@@ -160,7 +160,7 @@ public interface AuthService {
      * @return
      * @throws Exception
      */
-    public int updateLoginDateTime(String loginId, String userPw, boolean isFirstLogin, String clientId) throws Exception;
+    public int updateLoginDateTime(String loginId, boolean isFirstLogin, String clientId) throws Exception;
 
     /**
      * Passphrase 변경 또는 등록

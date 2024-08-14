@@ -22,10 +22,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Resource;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -218,8 +218,8 @@ public class PamRestController {
 						}
 
 						// 로그인 시간 업데이트
-						authService.updateLoginDateTime(loginId, null, (userVO.getFirstLoginDt() == null), clientId);
-						
+						authService.updateLoginDateTime(loginId, (userVO.getFirstLoginDt() == null), clientId);
+
 						List<?> userTokenList = tokenService.selectTokenListByClientId(loginId, clientId, null);
 						if (userTokenList != null && userTokenList.size() > 0) {
 							// delete token data that created before

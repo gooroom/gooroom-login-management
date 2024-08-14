@@ -23,12 +23,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import kr.gooroom.gpms.glm.service.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.MultiValueMap;
@@ -59,6 +61,9 @@ public class AuthServiceImpl implements AuthService {
 	@Resource(name = "logService")
 	private LogService logService;
 
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
 	private Token tokenFactory = new Token(Constant.TOKEN_SALT, Constant.TOKEN_ISSUER, Constant.TOKEN_INTERVAL);
 
 	@Override
@@ -81,15 +86,10 @@ public class AuthServiceImpl implements AuthService {
 			return userVO;
 		}
 
-		// check user auth (password)
-		paramMap.put("userPasswd", userPw);
-		paramMap.put("status", Constant.COMMON_STATUS_OK);
-		UserListVO userAuthVO = authDAO.selectCheckAuth(paramMap);
-		if (userAuthVO == null || StringUtils.isEmpty(userAuthVO.getLoginId())) {
-			
+		if (!(userVO.getStatus().equals(Constant.COMMON_STATUS_OK) &&
+			passwordEncoder.matches(userPw, userVO.getUserPasswd()))) {
 			// decrease login trial count and select count
 			long trialCount = authDAO.updateLoginTrial(paramMap);
-			
 			userVO.setRemainLoginTrial(String.valueOf((trialCount < 1) ? 0 : trialCount));
 			userVO.setCheckCd(Constant.RSP_CODE_NOT_AUTH);
 			return userVO;
@@ -146,7 +146,7 @@ public class AuthServiceImpl implements AuthService {
 		// 로그인 서비스 일 경우
 		if (isLoginService) {
 			// 로그인 시간 업데이트
-			updateLoginDateTime(loginId, null, (userVO.getFirstLoginDt() == null), clientId);
+			updateLoginDateTime(loginId, (userVO.getFirstLoginDt() == null), clientId);
 		}
 		
 		// reset login trial count as login success
@@ -184,7 +184,7 @@ public class AuthServiceImpl implements AuthService {
 		}
 
 		// 로그인 시간 업데이트
-		updateLoginDateTime(userVO.getUserId(), null, false, null);
+		updateLoginDateTime(userVO.getUserId(), false, null);
 
 		return userVO;
 	}
@@ -510,7 +510,7 @@ public class AuthServiceImpl implements AuthService {
 
 		Map<String, Object> paramMap = new HashMap<String, Object>();
 		paramMap.put("loginId", loginId);
-		paramMap.put("userPasswd", newPassword);
+		paramMap.put("userPasswd", passwordEncoder.encode(newPassword));
 		paramMap.put("modUserId", loginId);
 		paramMap.put("userPasswdStatus", Constant.COMMON_STATUS_OK);
 
@@ -543,15 +543,12 @@ public class AuthServiceImpl implements AuthService {
 
 	@Override
 	@Transactional
-	public int updateLoginDateTime(String loginId, String userPw, boolean isFirstLogin, String clientId) throws Exception {
+	public int updateLoginDateTime(String loginId, boolean isFirstLogin, String clientId) throws Exception {
 
 		Map<String, Object> paramMap = new HashMap<String, Object>();
 		paramMap.put("loginId", loginId);
 		paramMap.put("isFirstLogin", (isFirstLogin) ? "true" : null);
 		paramMap.put("clientId", clientId);
-		
-		if (userPw != null)
-			paramMap.put("userPasswd", userPw);
 
 		return authDAO.updateLoginDt(paramMap);
 	}

@@ -68,9 +68,11 @@ public class AuthDAO extends SqlSessionMetaDAO {
 	 * @return
 	 * @throws Exception
 	 */
+	/*
 	public UserListVO selectCheckAuth(Map<?, ?> paramMap) throws Exception {
 		return sqlSessionMeta.selectOne("authDAO.selectCheckAuth", paramMap);
 	}
+	*/
 
 	/**
 	 * 사용자 인증 가능 횟수 조회 update and select

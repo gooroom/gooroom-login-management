@@ -16,19 +16,20 @@
 
 package kr.gooroom.gpms.common.utils;
 
-import java.security.Key;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
-
-import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import jakarta.xml.bind.DatatypeConverter;
+import org.apache.commons.codec.digest.HmacAlgorithms;
+
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import java.security.Key;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 public class Token {
 
@@ -51,15 +52,14 @@ public class Token {
      * @throws JwtException
      */
     public String genLoginToken(String clientId, String userId) throws Exception {
-	Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-	long nowMillis = cal.getTimeInMillis() + expInterval;
-	Date now = new Date(nowMillis);
+		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+		long nowMillis = cal.getTimeInMillis() + expInterval;
+		Date now = new Date(nowMillis);
 
-	SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-	byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(clientId + salt + issuer);
-	Key key = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
+		byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(clientId + salt + issuer);
+		Key key = new SecretKeySpec(apiKeySecretBytes, HmacAlgorithms.HMAC_SHA_256.toString());
 
-	JwtBuilder builder = Jwts.builder().setId(userId).setExpiration(now).signWith(signatureAlgorithm, key);
+		JwtBuilder builder = Jwts.builder().id(userId).expiration(now).signWith(key);
 
 	return builder.compact();
     }
@@ -73,15 +73,13 @@ public class Token {
      * @throws JwtException
      */
     public String genOtpToken(String clientIp, String gcspId, String userId) throws Exception {
-	Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-	long nowMillis = cal.getTimeInMillis() + expInterval;
-	Date now = new Date(nowMillis);
+		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+		long nowMillis = cal.getTimeInMillis() + expInterval;
+		Date now = new Date(nowMillis);
 
-	SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-	byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(clientIp + gcspId + salt + issuer);
-	Key key = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
-
-	JwtBuilder builder = Jwts.builder().setId(userId).setExpiration(now).signWith(signatureAlgorithm, key);
+		byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(clientIp + gcspId + salt + issuer);
+		Key key = new SecretKeySpec(apiKeySecretBytes, HmacAlgorithms.HMAC_SHA_256.toString());
+		JwtBuilder builder = Jwts.builder().id(userId).expiration(now).signWith(key);
 
 	return builder.compact();
     }
@@ -95,9 +93,8 @@ public class Token {
      * @throws JwtException
      */
     public String parseToken(String token, String userId) throws Exception {
-	Claims claims = Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(userId + salt + issuer))
-		.parseClaimsJws(token).getBody();
-
+		SecretKey secretKey = Keys.hmacShaKeyFor(DatatypeConverter.parseBase64Binary(userId + salt + issuer));
+		Claims claims = Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload();
 	return claims.getId();
     }
 }

@@ -6,6 +6,7 @@
 	<resultMap id="UserInfoMap" type="userVO" >
 		<result property="userId" column="user_id"/>
 		<result property="userNm" column="user_nm"/>
+		<result property="userPasswd" column="user_passwd"/>
 		<result property="loginId" column="login_id"/>
 		<result property="status" column="status"/>
 		<result property="firstLoginDt" column="first_login_dt"/>
@@ -57,7 +58,7 @@
     
     <select id="selectUserInfo" parameterType="map" resultMap="UserInfoMap">
 	    SELECT
- 		um.user_id, um.user_nm, um.login_id, um.status, um.first_login_dt, um.last_login_dt, 
+ 		um.user_id, um.user_nm, um.user_passwd, um.login_id, um.status, um.first_login_dt, um.last_login_dt,
  		um.mod_user_id, um.mod_dt, um.nfc_secret_data, um.last_passwd_ch_dt, um.user_passwd_status, 
  		um.expire_dt, DATEDIFF(um.expire_dt, now()) as expire_remain_day,
 		dm.expire_dt dept_expite_dt, DATEDIFF(dm.expire_dt, now()) as dept_expire_remain_day,
@@ -77,7 +78,8 @@
 				#{loginId}
 			</foreach> 
     </select>
-    
+
+	<!--
     <select id="selectCheckAuth" parameterType="map" resultMap="UserListMap">
 	    SELECT <include refid="include_SelectUserListResult"/>
 		FROM user_mstr um	 
@@ -87,6 +89,7 @@
 				AND status = #{status}
 			</if>
     </select>
+    -->
     
     <update id="updateLoginTrial" parameterType="map">
   		UPDATE USER_MSTR SET LOGIN_TRIAL = (LOGIN_TRIAL-1), LOGIN_TRIAL_DT = now() WHERE USER_ID=#{loginId}
@@ -155,7 +158,7 @@
     <update id="updatePassword" parameterType="map">
 		UPDATE user_mstr
 		SET 
-			user_passwd = SHA2(#{userPasswd}, 256),
+			user_passwd = #{userPasswd},
 			mod_user_id = #{modUserId},
 			mod_dt = SYSDATE(),
 			user_passwd_status = #{userPasswdStatus},
@@ -172,7 +175,7 @@
 			mod_dt = SYSDATE()
 		WHERE login_id = #{loginId}
 	</update>
-	
+
 	<update id="updateLoginDt" parameterType="map">
 		UPDATE user_mstr
 		SET 
@@ -184,9 +187,6 @@
 				, client_id = #{clientId}
 			</if>
 		WHERE login_id = #{loginId}
-			<if test="userPasswd != null">
-			AND user_passwd = SHA2(#{userPasswd}, 256)
-			</if>
 	</update>
 
     <select id="selectPassphrase" parameterType="map" resultType="string">

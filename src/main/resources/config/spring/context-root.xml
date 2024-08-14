@@ -31,21 +31,25 @@
 		</property>
 	</bean>
 	
-	<bean id="dataSourceMeta" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+	<!-- Meta DataSource Configuration -->
+	<bean id="dataSourceMeta" class="org.apache.commons.dbcp2.BasicDataSource"
+		  destroy-method="close">
 		<property name="driverClassName" value="${metadb.driverClassName}" />
 		<property name="url" value="${metadb.url}" />
 		<property name="username" value="${metadb.username}" />
 		<property name="password" value="${metadb.password}" />
 		<property name="initialSize" value="${metadb.initialSize}" />
-		<property name="maxActive" value="${metadb.maxActive}" />
+		<property name="maxTotal" value="${metadb.maxActive}" />
 		<property name="maxIdle" value="${metadb.maxIdle}" />
 		<property name="minIdle" value="${metadb.minIdle}" />
+		<!--
 		<property name="maxWait" value="${metadb.maxWait}" />
+		-->
 		<property name="poolPreparedStatements" value="true"></property>
 		<property name="maxOpenPreparedStatements" value="50"></property>
-		<property name="validationQuery" value="select 1"/>
+		<property name="validationQuery" value="select 1" ></property>
 	</bean>
-	
+
 	<bean id="environmentVariablesConfiguration" class="org.jasypt.encryption.pbe.config.EnvironmentStringPBEConfig">
 		<property name="algorithm" value="PBEWITHMD5ANDDES" />
 		<property name="password" value="GOOROOM_GPMS_PASS_KEY" />
@@ -71,6 +75,13 @@
 	
 	<bean id="transactionManagerMeta" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource"><ref bean="dataSourceMeta"/></property>
+	</bean>
+
+	<bean id="passwordEncoder" class="org.springframework.security.crypto.password.Pbkdf2PasswordEncoder">
+		<constructor-arg  value="GOOROOM"/>
+		<constructor-arg  value="16"/>
+		<constructor-arg  value="2000"/>
+		<constructor-arg  value="PBKDF2WithHmacSHA256"/>
 	</bean>
 		
 </beans>

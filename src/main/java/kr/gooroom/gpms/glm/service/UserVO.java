@@ -35,6 +35,7 @@ public class UserVO implements Serializable {
 
 	private String userId;
 	private String userNm;
+	private String userPasswd;
 	private String loginId;
 	private String status;
 	private Date firstLoginDt;
@@ -77,6 +78,14 @@ public class UserVO implements Serializable {
 
 	public void setUserNm(String userNm) {
 		this.userNm = userNm;
+	}
+
+	public String getUserPasswd() {
+		return userPasswd;
+	}
+
+	public void setUserPasswd(String userPasswd) {
+		this.userPasswd = userPasswd;
 	}
 
 	public String getLoginId() {
