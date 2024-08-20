@@ -16,6 +16,7 @@
 
 package kr.gooroom.gpms.glm.service;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -31,6 +32,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class JsonDesktopInfoVO implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 3538239955449723982L;
 
     private ArrayList<JsonAppsVO> apps;

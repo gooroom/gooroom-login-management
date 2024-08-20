@@ -46,7 +46,6 @@ import kr.gooroom.gpms.job.service.JobVO;
 
 @Component
 public class CustomJobMaker {
-
 	private static final Logger logger = LoggerFactory.getLogger(CustomJobMaker.class);
 
 	@Resource(name = "jobService")
@@ -58,9 +57,8 @@ public class CustomJobMaker {
 	 * @param jobName   string job name.
 	 * @param clientIds string user id array that will null if none.
 	 * @return void
-	 * @throws Exception
 	 */
-	public void createJobWithClientIds(String moduleName, String taskName, String[] clientArray, HashMap<String, String> map) throws Exception {
+	public void createJobWithClientIds(String moduleName, String taskName, String[] clientArray, HashMap<String, String> map) {
 
 		try {
 			// create job
@@ -73,8 +71,7 @@ public class CustomJobMaker {
 			}
 
 			String jsonStr = "";
-			StringWriter outputWriter = new StringWriter();
-			try {
+			try (StringWriter outputWriter = new StringWriter()) {
 				ObjectMapper mapper = new ObjectMapper();
 				mapper.setSerializationInclusion(Include.NON_NULL);
 				mapper.writeValue(outputWriter, jobs);
@@ -82,13 +79,6 @@ public class CustomJobMaker {
 
 			} catch (Exception jsonex) {
 				logger.error("CustomJobMaker.createJobWithClientIds (make json) Exception occurred. ", jsonex);
-			} finally {
-				try {
-					if (outputWriter != null) {
-						outputWriter.close();
-					}
-				} catch (Exception finalex) {
-				}
 			}
 
 			JobVO jobVO = new JobVO();

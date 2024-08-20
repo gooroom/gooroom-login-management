@@ -16,6 +16,7 @@
 
 package kr.gooroom.gpms.glm.service;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -30,6 +31,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class PamLoginInfoVO extends GcspLoginInfoVO implements Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 7448144044386506154L;
 
 	private String login_token;

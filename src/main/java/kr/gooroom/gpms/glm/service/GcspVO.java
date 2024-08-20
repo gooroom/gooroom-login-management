@@ -16,6 +16,7 @@
 
 package kr.gooroom.gpms.glm.service;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -29,6 +30,7 @@ import java.util.Date;
 
 public class GcspVO implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -2793625994089088863L;
 
     private String gcspId;

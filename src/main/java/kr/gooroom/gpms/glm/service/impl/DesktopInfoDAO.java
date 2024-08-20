@@ -40,9 +40,8 @@ public class DesktopInfoDAO extends SqlSessionMetaDAO {
 	 * 
 	 * @param paramMap
 	 * @return
-	 * @throws Exception
 	 */
-	public DesktopInfoVO selectDesktopInfo(Map<?, ?> paramMap) throws Exception {
+	public DesktopInfoVO selectDesktopInfo(Map<?, ?> paramMap) {
 		return sqlSessionMeta.selectOne("desktopInfoDAO.selectDesktopInfoList", paramMap);
 	}
 
@@ -51,9 +50,8 @@ public class DesktopInfoDAO extends SqlSessionMetaDAO {
 	 * 
 	 * @param paramMap
 	 * @return
-	 * @throws Exception
 	 */
-	public DesktopInfoVO selectDesktopInfoByName(Map<?, ?> paramMap) throws Exception {
+	public DesktopInfoVO selectDesktopInfoByName(Map<?, ?> paramMap) {
 		return sqlSessionMeta.selectOne("desktopInfoDAO.selectDesktopInfoByName", paramMap);
 	}
 
@@ -62,9 +60,8 @@ public class DesktopInfoDAO extends SqlSessionMetaDAO {
 	 * 
 	 * @param paramMap
 	 * @return
-	 * @throws Exception
 	 */
-	public DesktopInfoVO selectDesktopInfoByUserAndClient(Map<?, ?> paramMap) throws Exception {
+	public DesktopInfoVO selectDesktopInfoByUserAndClient(Map<?, ?> paramMap) {
 		return sqlSessionMeta.selectOne("desktopInfoDAO.selectDesktopInfoByUserAndClient", paramMap);
 	}
 

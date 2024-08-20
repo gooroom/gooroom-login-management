@@ -33,27 +33,27 @@ public class DesktopInfoServiceImpl implements DesktopInfoService {
 	private DesktopInfoDAO desktopInfoDAO;
 
 	@Override
-	public DesktopInfoVO getDesktopInfo(String confId) throws Exception {
+	public DesktopInfoVO getDesktopInfo(String confId) {
 
-		Map<String, Object> paramMap = new HashMap<String, Object>();
+		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("confId", confId);
 
 		return desktopInfoDAO.selectDesktopInfo(paramMap);
 	}
 
 	@Override
-	public DesktopInfoVO getDesktopInfoByName(String confName) throws Exception {
+	public DesktopInfoVO getDesktopInfoByName(String confName) {
 
-		Map<String, Object> paramMap = new HashMap<String, Object>();
+		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("confName", confName);
 
 		return desktopInfoDAO.selectDesktopInfoByName(paramMap);
 	}
 
 	@Override
-	public DesktopInfoVO getDesktopInfoByUserAndClient(String userId, String clientId) throws Exception {
+	public DesktopInfoVO getDesktopInfoByUserAndClient(String userId, String clientId) {
 
-		Map<String, Object> paramMap = new HashMap<String, Object>();
+		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("userId", userId);
 		paramMap.put("clientId", clientId);
 

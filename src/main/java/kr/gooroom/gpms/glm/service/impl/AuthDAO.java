@@ -16,16 +16,14 @@
 
 package kr.gooroom.gpms.glm.service.impl;
 
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.stereotype.Repository;
-
 import kr.gooroom.gpms.common.service.dao.SqlSessionMetaDAO;
 import kr.gooroom.gpms.glm.service.DupClientVO;
 import kr.gooroom.gpms.glm.service.GcspVO;
-import kr.gooroom.gpms.glm.service.UserListVO;
 import kr.gooroom.gpms.glm.service.UserVO;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 인증관련
@@ -44,9 +42,8 @@ public class AuthDAO extends SqlSessionMetaDAO {
 	 * 
 	 * @param paramMap
 	 * @return
-	 * @throws Exception
 	 */
-	public UserVO selectUserInfo(Map<?, ?> paramMap) throws Exception {
+	public UserVO selectUserInfo(Map<?, ?> paramMap) {
 		return sqlSessionMeta.selectOne("authDAO.selectUserInfo", paramMap);
 	}
 
@@ -55,9 +52,8 @@ public class AuthDAO extends SqlSessionMetaDAO {
 	 * 
 	 * @param paramMap
 	 * @return
-	 * @throws Exception
 	 */
-	public List<?> selectUserList(Map<?, ?> paramMap) throws Exception {
+	public List<?> selectUserList(Map<?, ?> paramMap) {
 		return sqlSessionMeta.selectList("authDAO.selectUserList", paramMap);
 	}
 
@@ -66,7 +62,6 @@ public class AuthDAO extends SqlSessionMetaDAO {
 	 * 
 	 * @param paramMap
 	 * @return
-	 * @throws Exception
 	 */
 	/*
 	public UserListVO selectCheckAuth(Map<?, ?> paramMap) throws Exception {
@@ -79,9 +74,8 @@ public class AuthDAO extends SqlSessionMetaDAO {
 	 * 
 	 * @param paramMap
 	 * @return
-	 * @throws Exception
 	 */
-	public long updateLoginTrial(Map<?, ?> paramMap) throws Exception {
+	public long updateLoginTrial(Map<?, ?> paramMap) {
 		
 		// update
 		sqlSessionMeta.update("authDAO.updateLoginTrial", paramMap);
@@ -94,9 +88,8 @@ public class AuthDAO extends SqlSessionMetaDAO {
 	 * 
 	 * @param paramMap
 	 * @return
-	 * @throws Exception
 	 */
-	public long updateLoginTrialInit(Map<?, ?> paramMap) throws Exception {
+	public long updateLoginTrialInit(Map<?, ?> paramMap) {
 		
 		// update
 		return sqlSessionMeta.update("authDAO.updateLoginTrialInit", paramMap);
@@ -107,9 +100,8 @@ public class AuthDAO extends SqlSessionMetaDAO {
 	 * 
 	 * @param paramMap
 	 * @return
-	 * @throws Exception
 	 */
-	public long updateUserLoginTrialInit(Map<?, ?> paramMap) throws Exception {
+	public long updateUserLoginTrialInit(Map<?, ?> paramMap) {
 		
 		// update
 		return sqlSessionMeta.update("authDAO.updateUserLoginTrialInit", paramMap);
@@ -120,9 +112,8 @@ public class AuthDAO extends SqlSessionMetaDAO {
 	 * 
 	 * @param paramMap
 	 * @return
-	 * @throws Exception
 	 */
-	public UserVO selectCheckAuthByOtpToken(Map<?, ?> paramMap) throws Exception {
+	public UserVO selectCheckAuthByOtpToken(Map<?, ?> paramMap) {
 		return sqlSessionMeta.selectOne("authDAO.selectCheckAuthByOtpToken", paramMap);
 	}
 
@@ -131,9 +122,8 @@ public class AuthDAO extends SqlSessionMetaDAO {
 	 * 
 	 * @param paramMap
 	 * @return
-	 * @throws Exception
 	 */
-	public GcspVO selectGcspInfo(Map<?, ?> paramMap) throws Exception {
+	public GcspVO selectGcspInfo(Map<?, ?> paramMap) {
 		return sqlSessionMeta.selectOne("authDAO.selectGcspInfo", paramMap);
 	}
 
@@ -142,9 +132,8 @@ public class AuthDAO extends SqlSessionMetaDAO {
 	 * 
 	 * @param paramMap
 	 * @return
-	 * @throws Exception
 	 */
-	public int updatePassword(Map<?, ?> paramMap) throws Exception {
+	public int updatePassword(Map<?, ?> paramMap) {
 		return sqlSessionMeta.update("authDAO.updatePassword", paramMap);
 	}
 
@@ -153,9 +142,8 @@ public class AuthDAO extends SqlSessionMetaDAO {
 	 * 
 	 * @param paramMap
 	 * @return
-	 * @throws Exception
 	 */
-	public int updateUserNm(Map<?, ?> paramMap) throws Exception {
+	public int updateUserNm(Map<?, ?> paramMap) {
 		return sqlSessionMeta.update("authDAO.updateUserNm", paramMap);
 	}
 
@@ -164,7 +152,6 @@ public class AuthDAO extends SqlSessionMetaDAO {
 	 * 
 	 * @param paramMap
 	 * @return
-	 * @throws Exception
 	 */
 	public int updateLoginDt(Map<?, ?> paramMap) {
 		return sqlSessionMeta.update("authDAO.updateLoginDt", paramMap);
@@ -175,7 +162,6 @@ public class AuthDAO extends SqlSessionMetaDAO {
 	 * 
 	 * @param paramMap
 	 * @return
-	 * @throws Exception
 	 */
 	public String selectPassphrase(Map<?, ?> paramMap) {
 		return sqlSessionMeta.selectOne("authDAO.selectPassphrase", paramMap);
@@ -186,9 +172,8 @@ public class AuthDAO extends SqlSessionMetaDAO {
 	 * 
 	 * @param paramMap
 	 * @return
-	 * @throws Exception
 	 */
-	public int insertOrUpdatePassphrase(Map<?, ?> paramMap) throws Exception {
+	public int insertOrUpdatePassphrase(Map<?, ?> paramMap) {
 		return sqlSessionMeta.insert("authDAO.insertOrUpdatePassphrase", paramMap);
 	}
 	
@@ -197,9 +182,8 @@ public class AuthDAO extends SqlSessionMetaDAO {
 	 * 
 	 * @param paramMap
 	 * @return
-	 * @throws Exception
 	 */
-	public List<DupClientVO> selectOnlineClientsByUser(Map<?, ?> paramMap) throws Exception {
+	public List<DupClientVO> selectOnlineClientsByUser(Map<?, ?> paramMap) {
 		return sqlSessionMeta.selectList("authDAO.selectOnlineClientsByUser", paramMap);
 	}
 
@@ -208,9 +192,8 @@ public class AuthDAO extends SqlSessionMetaDAO {
 	 * 
 	 * @param String siteId
 	 * @return
-	 * @throws Exception
 	 */
-	public String selectPasswordRule(String siteId) throws Exception {
+	public String selectPasswordRule(String siteId) {
 		return sqlSessionMeta.selectOne("authDAO.selectPasswordRule", siteId);
 	}
 
@@ -219,9 +202,8 @@ public class AuthDAO extends SqlSessionMetaDAO {
 	 * 
 	 * @param String siteId
 	 * @return
-	 * @throws Exception
 	 */
-	public int selectLockTimeValue(String siteId) throws Exception {
+	public int selectLockTimeValue(String siteId) {
 		return sqlSessionMeta.selectOne("authDAO.selectLockTimeValue", siteId);
 	}
 
@@ -230,9 +212,8 @@ public class AuthDAO extends SqlSessionMetaDAO {
 	 * 
 	 * @param String siteId
 	 * @return
-	 * @throws Exception
 	 */
-	public int selectIsEnableDuplicateLogin(String siteId) throws Exception {
+	public int selectIsEnableDuplicateLogin(String siteId) {
 		return sqlSessionMeta.selectOne("authDAO.selectIsEnableDuplicateLogin", siteId);
 	}
 

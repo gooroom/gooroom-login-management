@@ -36,9 +36,9 @@ public class TokenServiceImpl implements TokenService {
 	private TokenDAO tokenDAO;
 
 	@Override
-	public UserTokenVO selectTokenByTokenId(String clientId, String token, String statusCd) throws Exception {
+	public UserTokenVO selectTokenByTokenId(String clientId, String token, String statusCd) {
 
-		Map<String, Object> paramMap = new HashMap<String, Object>();
+		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("clientId", clientId);
 		paramMap.put("token", token);
 		if (statusCd != null)
@@ -48,9 +48,9 @@ public class TokenServiceImpl implements TokenService {
 	}
 
 	@Override
-	public List<?> selectTokenListByClientId(String userId, String clientId, String statusCd) throws Exception {
+	public List<?> selectTokenListByClientId(String userId, String clientId, String statusCd) {
 
-		Map<String, Object> paramMap = new HashMap<String, Object>();
+		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("userId", userId);
 		paramMap.put("clientId", clientId);
 		if (statusCd != null)
@@ -60,9 +60,9 @@ public class TokenServiceImpl implements TokenService {
 	}
 
 	@Override
-	public List<?> selectTokenListByUserId(String userId, String statusCd) throws Exception {
+	public List<?> selectTokenListByUserId(String userId, String statusCd) {
 
-		Map<String, Object> paramMap = new HashMap<String, Object>();
+		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("userId", userId);
 		if (statusCd != null)
 			paramMap.put("statusCd", statusCd);
@@ -71,20 +71,20 @@ public class TokenServiceImpl implements TokenService {
 	}
 
 	@Override
-	public int insertToken(Map<String, Object> tokenList) throws Exception {
+	public int insertToken(Map<String, Object> tokenList) {
 
 		return tokenDAO.insertTokenInfo(tokenList);
 	}
 
 	@Override
-	public int updateToken(TokenVO tokenVO) throws Exception {
+	public int updateToken(TokenVO tokenVO) {
 		return 0;
 	}
 
 	@Override
-	public int updateOtpTokenInfo(String otpToken, String gcspId) throws Exception {
+	public int updateOtpTokenInfo(String otpToken, String gcspId) {
 
-		Map<String, Object> paramMap = new HashMap<String, Object>();
+		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("token", otpToken);
 		paramMap.put("statusCd", Constant.TOKEN_OTP_STATUS_CODE_EXPIRE);
 		paramMap.put("currntStatusCd", Constant.TOKEN_OTP_STATUS_CODE_VALID);
@@ -95,8 +95,8 @@ public class TokenServiceImpl implements TokenService {
 	}
 
 	@Override
-	public int deleteTokenByTokenId(String userId, String token) throws Exception {
-		Map<String, Object> paramMap = new HashMap<String, Object>();
+	public int deleteTokenByTokenId(String userId, String token) {
+		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("userId", userId);
 		paramMap.put("token", token);
 
@@ -104,8 +104,8 @@ public class TokenServiceImpl implements TokenService {
 	}
 
 	@Override
-	public int deleteTokenByClientId(String userId, String clientId) throws Exception {
-		Map<String, Object> paramMap = new HashMap<String, Object>();
+	public int deleteTokenByClientId(String userId, String clientId) {
+		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("userId", userId);
 		paramMap.put("clientId", clientId);
 

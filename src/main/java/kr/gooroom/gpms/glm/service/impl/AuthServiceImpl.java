@@ -18,10 +18,7 @@ package kr.gooroom.gpms.glm.service.impl;
 
 import java.net.URI;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import jakarta.annotation.Resource;
 
@@ -64,13 +61,13 @@ public class AuthServiceImpl implements AuthService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-	private Token tokenFactory = new Token(Constant.TOKEN_SALT, Constant.TOKEN_ISSUER, Constant.TOKEN_INTERVAL);
+	private final Token tokenFactory = new Token(Constant.TOKEN_SALT, Constant.TOKEN_ISSUER, Constant.TOKEN_INTERVAL);
 
 	@Override
 	@Transactional
-	public UserVO checkLoginByUserId(String loginId, String userPw, boolean isLoginService, String clientId) throws Exception {
+	public UserVO checkLoginByUserId(String loginId, String userPw, boolean isLoginService, String clientId) {
 
-		Map<String, Object> paramMap = new HashMap<String, Object>();
+		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("loginId", loginId);
 
 		// Check User Exist
@@ -102,7 +99,7 @@ public class AuthServiceImpl implements AuthService {
 						userVO.setCheckCd(Constant.RSP_CODE_USEREXPIRE);
 						return userVO;
 					}
-				} catch(Exception eex) {
+				} catch(Exception ignored) {
 				}
 			}
 			
@@ -114,7 +111,7 @@ public class AuthServiceImpl implements AuthService {
 						userVO.setCheckCd(Constant.RSP_CODE_DEPTEXPIRE);
 						return userVO;
 					}
-				} catch(Exception eex) {
+				} catch(Exception ignored) {
 				}
 			}
 			
@@ -190,9 +187,9 @@ public class AuthServiceImpl implements AuthService {
 	}
 
 	@Override
-	public List<?> getUserList(List<String> userList, String gcspId) throws Exception {
+	public List<?> getUserList(List<String> userList, String gcspId) {
 
-		Map<String, Object> paramMap = new HashMap<String, Object>();
+		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("loginIds", userList);
 
 		return authDAO.selectUserList(paramMap);
@@ -226,13 +223,12 @@ public class AuthServiceImpl implements AuthService {
 
 	@Override
 	@Transactional
-	public Map<String, Object> setPamTokenAndDesktopInfo(UserVO userVO, String clientId, String clientIp)
-			throws Exception {
+	public Map<String, Object> setPamTokenAndDesktopInfo(UserVO userVO, String clientId, String clientIp) {
 
-		Map<String, Object> resultData = new HashMap<String, Object>();
+		Map<String, Object> resultData = new HashMap<>();
 
 		// otpToken 처리
-		ArrayList<HashMap<String, String>> otpList = new ArrayList<HashMap<String, String>>();
+		ArrayList<HashMap<String, String>> otpList = new ArrayList<>();
 
 		try {
 			// DesktopInfo 생성
@@ -280,7 +276,7 @@ public class AuthServiceImpl implements AuthService {
 							String gcspId = params.get("gcsp_id").get(0);
 
 							if (StringUtils.isNotEmpty(gcspId)) {
-								HashMap<String, String> otpMap = new HashMap<String, String>();
+								HashMap<String, String> otpMap = new HashMap<>();
 
 								String otpToken = tokenFactory.genOtpToken(clientIp, gcspId + "#" + app.getOrder(),
 										userVO.getUserId());
@@ -289,10 +285,10 @@ public class AuthServiceImpl implements AuthService {
 								otpMap.put("otpToken", otpToken);
 								otpList.add(otpMap);
 
-								StringBuffer urlBuffer = new StringBuffer(cmd);
+								StringBuilder urlBuffer = new StringBuilder(cmd);
 
 								urlBuffer.append("\"");
-								urlBuffer.append(url.substring(0, url.indexOf("?")));
+								urlBuffer.append(url, 0, url.indexOf("?"));
 								urlBuffer.append("?").append(otpTokenKey).append("=").append(otpToken);
 								urlBuffer.append(otherUrl);
 								urlBuffer.append("\"");
@@ -338,8 +334,8 @@ public class AuthServiceImpl implements AuthService {
 			int addMinute = Integer.parseInt(Constant.TOKEN_OTP_EXPIRATION_MINUTE);
 			String expirationDt = CommonUtils.getAddMinMySqlString(addMinute);
 
-			Map<String, Object> paramMap = new HashMap<String, Object>();
-			List<TokenVO> tokenList = new ArrayList<TokenVO>();
+			Map<String, Object> paramMap = new HashMap<>();
+			List<TokenVO> tokenList = new ArrayList<>();
 
 			// loginToken 생성
 			String loginToken = tokenFactory.genLoginToken(clientId, userVO.getUserId());
@@ -398,11 +394,7 @@ public class AuthServiceImpl implements AuthService {
 				paramMap.put("loginId", userVO.getLoginId());
 				paramMap.put("clientId", clientId);
 				String passphrase = authDAO.selectPassphrase(paramMap);
-				if (passphrase == null) {
-					loginInfoVO.setPassphrase("");
-				} else {
-					loginInfoVO.setPassphrase(passphrase);
-				}
+				loginInfoVO.setPassphrase(Objects.requireNonNullElse(passphrase, ""));
 				
 				loginInfoVO.setEmail(userVO.getUserEmail());
 				resultData.put("loginInfo", loginInfoVO);
@@ -436,9 +428,9 @@ public class AuthServiceImpl implements AuthService {
 	}
 
 	@Override
-	public GcspVO checkGcspInfo(String clientId, String clientIp) throws Exception {
+	public GcspVO checkGcspInfo(String clientId, String clientIp) {
 
-		Map<String, Object> paramMap = new HashMap<String, Object>();
+		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("gcspId", clientId);
 		if (StringUtils.isNotEmpty(clientIp))
 			paramMap.put("ipRanges", clientIp);
@@ -483,10 +475,10 @@ public class AuthServiceImpl implements AuthService {
 			userClientUseHistoryVO.setActTp(loginHistoryVO.getActTp());
 			logService.insertOrUpdateUserClientUseHistory(userClientUseHistoryVO);
 
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 
-		Map<String, Object> resultData = new HashMap<String, Object>();
+		Map<String, Object> resultData = new HashMap<>();
 		resultData.put("loginInfo", loginInfoVO);
 
 		return resultData;
@@ -506,9 +498,9 @@ public class AuthServiceImpl implements AuthService {
 		return result;
 	}
 
-	private int updatePassword(String loginId, String newPassword) throws Exception {
+	private int updatePassword(String loginId, String newPassword) {
 
-		Map<String, Object> paramMap = new HashMap<String, Object>();
+		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("loginId", loginId);
 		paramMap.put("userPasswd", passwordEncoder.encode(newPassword));
 		paramMap.put("modUserId", loginId);
@@ -531,9 +523,9 @@ public class AuthServiceImpl implements AuthService {
 
 	}
 
-	private int updateUserNm(String loginId, String newUserNm) throws Exception {
+	private int updateUserNm(String loginId, String newUserNm) {
 
-		Map<String, Object> paramMap = new HashMap<String, Object>();
+		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("loginId", loginId);
 		paramMap.put("userNm", newUserNm);
 		paramMap.put("modUserId", loginId);
@@ -543,9 +535,9 @@ public class AuthServiceImpl implements AuthService {
 
 	@Override
 	@Transactional
-	public int updateLoginDateTime(String loginId, boolean isFirstLogin, String clientId) throws Exception {
+	public int updateLoginDateTime(String loginId, boolean isFirstLogin, String clientId) {
 
-		Map<String, Object> paramMap = new HashMap<String, Object>();
+		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("loginId", loginId);
 		paramMap.put("isFirstLogin", (isFirstLogin) ? "true" : null);
 		paramMap.put("clientId", clientId);
@@ -553,9 +545,9 @@ public class AuthServiceImpl implements AuthService {
 		return authDAO.updateLoginDt(paramMap);
 	}
 
-	private UserVO selectCheckAuthByOtpToken(String otpToken, String gcspId, String clientId) throws Exception {
+	private UserVO selectCheckAuthByOtpToken(String otpToken, String gcspId, String clientId) {
 
-		Map<String, Object> paramMap = new HashMap<String, Object>();
+		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("token", otpToken);
 		paramMap.put("statusCd", Constant.TOKEN_OTP_STATUS_CODE_VALID);
 
@@ -580,9 +572,9 @@ public class AuthServiceImpl implements AuthService {
 		return result;
 	}
 
-	private int updatePassphrase(String loginId, String clientId, String passphrase) throws Exception {
+	private int updatePassphrase(String loginId, String clientId, String passphrase) {
 
-		Map<String, Object> paramMap = new HashMap<String, Object>();
+		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("loginId", loginId);
 		paramMap.put("clientId", clientId);
 		paramMap.put("passphrase", passphrase);
@@ -592,22 +584,22 @@ public class AuthServiceImpl implements AuthService {
 	}
 
 	@Override
-	public List<?> getOnlineClientsByUser(String loginId) throws Exception {
+	public List<?> getOnlineClientsByUser(String loginId) {
 		
-		Map<String, Object> paramMap = new HashMap<String, Object>();
+		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("loginId", loginId);
 
 		return authDAO.selectOnlineClientsByUser(paramMap);
 	}
 
 	@Override
-	public String getPasswordRule(String siteId) throws Exception {
+	public String getPasswordRule(String siteId) {
 
 		return authDAO.selectPasswordRule(siteId);
 	}
 	
 	@Override
-	public int isEnableDuplicateLogin(String siteId) throws Exception {
+	public int isEnableDuplicateLogin(String siteId) {
 
 		return authDAO.selectIsEnableDuplicateLogin(siteId);
 	}

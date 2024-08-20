@@ -41,7 +41,7 @@ public interface DesktopInfoService {
      * @return
      * @throws Exception
      */
-    public DesktopInfoVO getDesktopInfo(String confId) throws Exception;
+    DesktopInfoVO getDesktopInfo(String confId) throws Exception;
 
     /**
      * DesktopInfo 반환
@@ -50,7 +50,7 @@ public interface DesktopInfoService {
      * @return
      * @throws Exception
      */
-    public DesktopInfoVO getDesktopInfoByName(String confName) throws Exception;
+    DesktopInfoVO getDesktopInfoByName(String confName) throws Exception;
 
     /**
      * DesktopInfo 반환
@@ -59,6 +59,6 @@ public interface DesktopInfoService {
      * @return
      * @throws Exception
      */
-    public DesktopInfoVO getDesktopInfoByUserAndClient(String userId, String clientId) throws Exception;
+    DesktopInfoVO getDesktopInfoByUserAndClient(String userId, String clientId) throws Exception;
 
 }

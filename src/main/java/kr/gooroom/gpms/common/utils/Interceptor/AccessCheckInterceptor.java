@@ -32,16 +32,16 @@ public class AccessCheckInterceptor implements HandlerInterceptor {
 
     private static final Logger logger = LoggerFactory.getLogger(AccessCheckInterceptor.class);
 
-    private static final String AuthURIList[] = { Constant.AUTH_PAM_API_PREFIX, Constant.AUTH_GCSP_API_PREFIX };
+    private static final String[] AuthURIList = { Constant.AUTH_PAM_API_PREFIX, Constant.AUTH_GCSP_API_PREFIX };
 
     private boolean isAuthURI(String reqURI) {
 	boolean checkURI = false;
-	for (int i = 0; i < AuthURIList.length; i++) {
-	    if (reqURI.startsWith(AuthURIList[i])) {
-		checkURI = true;
-		break;
-	    }
-	}
+		for (String s : AuthURIList) {
+			if (reqURI.startsWith(s)) {
+				checkURI = true;
+				break;
+			}
+		}
 	return checkURI;
     }
 
@@ -71,9 +71,8 @@ public class AccessCheckInterceptor implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
-	    ModelAndView modelAndView) throws Exception {
-
-	logger.debug("LoginCheckInterceptor postHandle");
+	    ModelAndView modelAndView) {
+		logger.debug("LoginCheckInterceptor postHandle");
     }
 
 }

@@ -42,9 +42,8 @@ public class CtrlItemDAO extends SqlSessionMetaDAO {
      * 
      * @param paramMap
      * @return
-     * @throws Exception
      */
-    public List<CtrlItemVO> selectCtrlItem(Map<?, ?> paramMap) throws Exception {
+    public List<CtrlItemVO> selectCtrlItem(Map<?, ?> paramMap) {
 	return sqlSessionMeta.selectList("ctrlItemDAO.selectCtrlItem", paramMap);
     }
 
@@ -53,10 +52,9 @@ public class CtrlItemDAO extends SqlSessionMetaDAO {
      * 
      * @param clientId String
      * @return
-     * @throws Exception
      */
-    public List<CtrlItemVO> selectAvailableIpRule(String clientId) throws Exception {
-    	HashMap<String, String> map = new HashMap<String, String>();
+    public List<CtrlItemVO> selectAvailableIpRule(String clientId) {
+    	HashMap<String, String> map = new HashMap<>();
     	map.put("clientId", clientId);
 	return sqlSessionMeta.selectList("ctrlItemDAO.selectAvailableIpRule", map);
     }

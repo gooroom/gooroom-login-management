@@ -41,7 +41,7 @@ public interface LogService {
      * @return
      * @throws Exception
      */
-    public int insertLoginHistory(LoginHistoryVO loginHistoryVO) throws Exception;
+    int insertLoginHistory(LoginHistoryVO loginHistoryVO) throws Exception;
 
     /**
      * 사용자 이력 기록
@@ -49,7 +49,7 @@ public interface LogService {
      * @return
      * @throws Exception
      */
-    public int insertUserHistory(String loginId) throws Exception;
+    int insertUserHistory(String loginId) throws Exception;
 
     /**
      * 사용자 단말 사용 이력 기록
@@ -57,6 +57,6 @@ public interface LogService {
      * @return
      * @throws Exception
      */
-    public int insertOrUpdateUserClientUseHistory(UserClientUseHistoryVO userClientUseHistoryVO) throws Exception;
+    int insertOrUpdateUserClientUseHistory(UserClientUseHistoryVO userClientUseHistoryVO) throws Exception;
 
 }

@@ -47,7 +47,7 @@ public interface TokenService {
      * @return
      * @throws Exception
      */
-    public UserTokenVO selectTokenByTokenId(String clientId, String token, String statusCd) throws Exception;
+    UserTokenVO selectTokenByTokenId(String clientId, String token, String statusCd) throws Exception;
 
     /**
      * 클라이언트 토큰 발급 정보 확인
@@ -59,7 +59,7 @@ public interface TokenService {
      * @return
      * @throws Exception
      */
-    public List<?> selectTokenListByClientId(String userId, String clientId, String statusCd) throws Exception;
+    List<?> selectTokenListByClientId(String userId, String clientId, String statusCd) throws Exception;
 
     /**
      * 사용자 토큰 목록 반환 (사용자가 로그인 된 모든 단말기)
@@ -70,7 +70,7 @@ public interface TokenService {
      * @return
      * @throws Exception
      */
-    public List<?> selectTokenListByUserId(String userId, String statusCd) throws Exception;
+    List<?> selectTokenListByUserId(String userId, String statusCd) throws Exception;
 
     /**
      * 토큰 설정
@@ -79,7 +79,7 @@ public interface TokenService {
      * @return
      * @throws Exception
      */
-    public int insertToken(Map<String, Object> tokenList) throws Exception;
+    int insertToken(Map<String, Object> tokenList) throws Exception;
 
     /**
      * 토큰 정보 갱신
@@ -88,7 +88,7 @@ public interface TokenService {
      * @return
      * @throws Exception
      */
-    public int updateToken(TokenVO tokenVO) throws Exception;
+    int updateToken(TokenVO tokenVO) throws Exception;
 
     /**
      * OTP 토큰정보 상태 정보 업데이트
@@ -100,7 +100,7 @@ public interface TokenService {
      * @return
      * @throws Exception
      */
-    public int updateOtpTokenInfo(String otpToken, String clientId) throws Exception;
+    int updateOtpTokenInfo(String otpToken, String clientId) throws Exception;
 
     /**
      * 토큰 폐기
@@ -110,7 +110,7 @@ public interface TokenService {
      * @return
      * @throws Exception
      */
-    public int deleteTokenByTokenId(String userId, String token) throws Exception;
+    int deleteTokenByTokenId(String userId, String token) throws Exception;
 
     /**
      * 토큰 폐기
@@ -120,6 +120,6 @@ public interface TokenService {
      * @return
      * @throws Exception
      */
-    public int deleteTokenByClientId(String userId, String clientId) throws Exception;
+    int deleteTokenByClientId(String userId, String clientId) throws Exception;
     
 }

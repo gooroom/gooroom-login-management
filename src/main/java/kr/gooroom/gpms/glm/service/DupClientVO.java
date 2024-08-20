@@ -16,6 +16,7 @@
 
 package kr.gooroom.gpms.glm.service;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -28,9 +29,7 @@ import java.io.Serializable;
 
 public class DupClientVO implements Serializable {
 
-	/**
-	 * 
-	 */
+	@Serial
 	private static final long serialVersionUID = 8253986829484162405L;
 	private String clientId;
 	private String clientNm;

@@ -16,6 +16,7 @@
 
 package kr.gooroom.gpms.glm.service;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,6 +31,7 @@ import java.util.Date;
 
 public class DesktopInfoVO implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 3538239955449723982L;
 
     private String confId;

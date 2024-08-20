@@ -85,7 +85,7 @@ public class CommonUtils {
 
 		try {
 			mysqlDate = sdformat.parse(mysqlDateString);
-		} catch (ParseException e) {
+		} catch (ParseException ignored) {
 		}
 
 		return mysqlDate;
@@ -109,9 +109,7 @@ public class CommonUtils {
 
 		cal.add(Calendar.MINUTE, addMinute);
 
-		String mysqlDateString = sdformat.format(cal.getTime());
-
-		return mysqlDateString;
+		return sdformat.format(cal.getTime());
 	}
 
 	/**
@@ -152,7 +150,7 @@ public class CommonUtils {
 	public static Map<String, Object> createResult(String rspStatus, String rspCode, String message,
 			CommonHeaderVO commonHeaderVO, Map<String, Object> resultMap, ModelMap model) {
 
-		Map<String, Object> result = new HashMap<String, Object>();
+		Map<String, Object> result = new HashMap<>();
 
 		commonHeaderVO.setResultInfo(rspStatus, rspCode, message);
 		result.put(Constant.COMMON_HEADER, commonHeaderVO);

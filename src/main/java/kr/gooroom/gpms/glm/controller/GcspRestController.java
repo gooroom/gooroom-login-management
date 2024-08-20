@@ -67,7 +67,7 @@ public class GcspRestController {
 
 	String clientCert = req.getHeader(Constant.H_CERT);
 	String clientIp = req.getHeader(Constant.H_REALIP);
-	String gcspId = null;
+	String gcspId;
 
 	CommonHeaderVO commonHeaderVo = new CommonHeaderVO();
 
@@ -129,7 +129,7 @@ public class GcspRestController {
 
 	// 사용자 인증 체크
 	UserVO userVO = authService.checkLoginByUserId(loginId, userPw, true, null);
-	String rsp_code = "";
+	String rsp_code;
 
 	if (userVO != null) {
 
@@ -139,9 +139,7 @@ public class GcspRestController {
 
 		logger.debug("authGCSP succeed. loginId[{}] clientId[{}]", loginId, gcspId);
 		logger.debug("authGCSP resultData - ");
-		resultData.forEach((key, value) -> {
-		    logger.debug("{} : {}", key, value.toString());
-		});
+		resultData.forEach((key, value) -> logger.debug("{} : {}", key, value.toString()));
 
 		return CommonUtils.createResult(Constant.COMMON_MSG_SUCCESS, Constant.RSP_CODE_OK, returnMsg,
 			commonHeaderVo, resultData, model);
@@ -177,7 +175,7 @@ public class GcspRestController {
 
 	String clientCert = req.getHeader(Constant.H_CERT);
 	String clientIp = req.getHeader(Constant.H_REALIP);
-	String gcspId = null;
+	String gcspId;
 
 	CommonHeaderVO commonHeaderVo = new CommonHeaderVO();
 
@@ -245,9 +243,7 @@ public class GcspRestController {
 
 	    logger.debug("tokenAuthGCSP succeed. userId[{}] gcspId[{}] clientId[{}]", userVO.getUserId(), gcspId);
 	    logger.debug("tokenAuthGCSP resultData - ");
-	    resultData.forEach((key, value) -> {
-		logger.debug("{} : {}", key, value.toString());
-	    });
+	    resultData.forEach((key, value) -> logger.debug("{} : {}", key, value.toString()));
 
 	    return CommonUtils.createResult(Constant.COMMON_MSG_SUCCESS, Constant.RSP_CODE_OK, "", commonHeaderVo,
 		    resultData, model);
@@ -276,7 +272,7 @@ public class GcspRestController {
 
 	String clientCert = req.getHeader(Constant.H_CERT);
 	String clientIp = req.getHeader(Constant.H_REALIP);
-	String gcspId = null;
+	String gcspId;
 
 	CommonHeaderVO commonHeaderVo = new CommonHeaderVO();
 
@@ -288,7 +284,7 @@ public class GcspRestController {
 		    MessageSourceHelper.getMessage("common.msg.required.param"), commonHeaderVo, null, model);
 	}
 
-	logger.debug("checkUsers params => users[{}] : {}", users.size(), users.toString());
+	logger.debug("checkUsers params => users[{}] : {}", users.size(), users);
 
 	if (StringUtils.isNotEmpty(clientCert)) {
 	    clientCert = clientCert.replaceAll("[\n\t\r]", " ");
@@ -342,7 +338,7 @@ public class GcspRestController {
 	if (userList != null && userList.size() > 0) {
 
 	    logger.debug("checkUsers succeed. userList size : {}", userList.size());
-	    logger.debug("result UserList : {}]", users.toString());
+	    logger.debug("result UserList : {}]", users);
 
 	    return CommonUtils.createResult(Constant.COMMON_MSG_SUCCESS, Constant.RSP_CODE_OK, "", commonHeaderVo,
 		    resultData, model);

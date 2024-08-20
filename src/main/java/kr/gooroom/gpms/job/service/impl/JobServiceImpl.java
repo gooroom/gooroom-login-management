@@ -69,8 +69,8 @@ public class JobServiceImpl implements JobService {
 			if (reCnt1 > 0) {
 				long reCnt2 = 0;
 				String[] clientArray = jobVO.getClientIds();
-				for (int i = 0; i < clientArray.length; i++) {
-					jobVO.setClientId(clientArray[i]);
+				for (String s : clientArray) {
+					jobVO.setClientId(s);
 					reCnt2 = jobDAO.createJobTarget(jobVO);
 				}
 
@@ -90,20 +90,16 @@ public class JobServiceImpl implements JobService {
 		} catch (SQLException sqlEx) {
 			logger.error("error in createJob (by bean) : {}, {}, {}", Constant.CODE_SYSERROR,
 					MessageSourceHelper.getMessage(Constant.MSG_SYSERROR), sqlEx.toString());
-			if (statusVO != null) {
-				statusVO.setResultInfo("fail", Constant.CODE_SYSERROR,
-						MessageSourceHelper.getMessage(Constant.MSG_SYSERROR));
-			}
+			statusVO.setResultInfo("fail", Constant.CODE_SYSERROR,
+					MessageSourceHelper.getMessage(Constant.MSG_SYSERROR));
 			throw sqlEx;
 
 		} catch (Exception ex) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			logger.error("error in createJob (by bean) : {}, {}, {}", Constant.CODE_SYSERROR,
 					MessageSourceHelper.getMessage(Constant.MSG_SYSERROR), ex.toString());
-			if (statusVO != null) {
-				statusVO.setResultInfo("fail", Constant.CODE_SYSERROR,
-						MessageSourceHelper.getMessage(Constant.MSG_SYSERROR));
-			}
+			statusVO.setResultInfo("fail", Constant.CODE_SYSERROR,
+					MessageSourceHelper.getMessage(Constant.MSG_SYSERROR));
 		}
 
 		return statusVO;

@@ -39,9 +39,8 @@ public class LogDAO extends SqlSessionMetaDAO {
      *
      * @param loginHistoryVO
      * @return
-     * @throws Exception
      */
-    public int insertLoginHistory(LoginHistoryVO loginHistoryVO) throws Exception {
+    public int insertLoginHistory(LoginHistoryVO loginHistoryVO) {
 	return sqlSessionMeta.insert("logDAO.insertLoginHistory", loginHistoryVO);
     }
 
@@ -50,9 +49,8 @@ public class LogDAO extends SqlSessionMetaDAO {
      * 
      * @param loginId
      * @return
-     * @throws Exception
      */
-    public int insertUserHistory(String loginId) throws Exception {
+    public int insertUserHistory(String loginId) {
 	return sqlSessionMeta.insert("logDAO.insertUserHistory", loginId);
     }
 
@@ -62,9 +60,8 @@ public class LogDAO extends SqlSessionMetaDAO {
      *
      * @param userClientUseHistoryVO
      * @return
-     * @throws Exception
      */
-    public int insertOrUpdateClientUseHist(UserClientUseHistoryVO userClientUseHistoryVO) throws Exception {
+    public int insertOrUpdateClientUseHist(UserClientUseHistoryVO userClientUseHistoryVO) {
         return sqlSessionMeta.insert("logDAO.insertOrUpdateClientUseHist", userClientUseHistoryVO);
     }
 

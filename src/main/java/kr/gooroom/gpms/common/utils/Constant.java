@@ -22,7 +22,7 @@ import java.util.Properties;
 
 public class Constant {
 
-    private static Properties prop = new Properties();
+    private static final Properties prop = new Properties();
     private static final String GOOROOM_PROPERTIES = "/properties/gooroomapi.properties";
 
     static {

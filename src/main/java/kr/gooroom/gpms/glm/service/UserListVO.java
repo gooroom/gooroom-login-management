@@ -16,6 +16,7 @@
 
 package kr.gooroom.gpms.glm.service;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 import org.apache.commons.lang3.StringUtils;
@@ -32,6 +33,7 @@ import kr.gooroom.gpms.common.utils.Constant;
 
 public class UserListVO implements Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 2679941845375921592L;
 
 	private String loginId;

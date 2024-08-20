@@ -18,6 +18,7 @@ package kr.gooroom.gpms.common.utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 
@@ -36,14 +37,14 @@ public class ParseCertificate {
 
     public static String parseCert(String cert) {
 
-	String certCn = null;
+	String certCn;
 
 	cert = parseWebServerCert(cert);
 
 	logger.debug("ParseCertificate parseWebServerCert[{}]", cert);
 
 	try {
-	    InputStream stream = new ByteArrayInputStream(cert.getBytes("UTF-8"));
+	    InputStream stream = new ByteArrayInputStream(cert.getBytes(StandardCharsets.UTF_8));
 
 	    CertificateFactory fact = CertificateFactory.getInstance("X.509");
 	    X509Certificate myCert = (X509Certificate) fact.generateCertificate(stream);
@@ -63,7 +64,7 @@ public class ParseCertificate {
 
 	private static String parseWebServerCert(String cert) {
 
-		String paserCert = null;
+		String paserCert;
 
 		if (StringUtils.indexOf(cert, "                                                                                                   ") > 0) {
 

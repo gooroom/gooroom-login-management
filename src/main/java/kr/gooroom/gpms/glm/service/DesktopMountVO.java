@@ -16,6 +16,7 @@
 
 package kr.gooroom.gpms.glm.service;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -28,6 +29,7 @@ import java.io.Serializable;
 
 public class DesktopMountVO implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 601168556065068176L;
     
     private String name;

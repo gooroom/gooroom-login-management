@@ -18,6 +18,7 @@ package kr.gooroom.gpms.glm.service;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -31,6 +32,7 @@ import java.util.Date;
 
 public class UserClientUseHistoryVO implements Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 3538239955449723982L;
 
 	private String userId;

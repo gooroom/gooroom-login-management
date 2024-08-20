@@ -16,54 +16,31 @@
 
 package kr.gooroom.gpms.glm.controller;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Resource;
 import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
+import kr.gooroom.gpms.common.service.CommonHeaderVO;
+import kr.gooroom.gpms.common.service.CommonResultVO;
+import kr.gooroom.gpms.common.service.CommonService;
+import kr.gooroom.gpms.common.service.impl.EmailServiceImpl;
+import kr.gooroom.gpms.common.utils.*;
+import kr.gooroom.gpms.glm.service.*;
+import kr.gooroom.gpms.job.CustomJobMaker;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import kr.gooroom.gpms.common.service.CommonHeaderVO;
-import kr.gooroom.gpms.common.service.CommonResultVO;
-import kr.gooroom.gpms.common.service.CommonService;
-import kr.gooroom.gpms.common.service.impl.EmailServiceImpl;
-import kr.gooroom.gpms.common.utils.CommonUtils;
-import kr.gooroom.gpms.common.utils.Constant;
-import kr.gooroom.gpms.common.utils.DesktopUtils;
-import kr.gooroom.gpms.common.utils.MessageSourceHelper;
-import kr.gooroom.gpms.common.utils.ParseCertificate;
-import kr.gooroom.gpms.glm.service.AuthService;
-import kr.gooroom.gpms.glm.service.DesktopAppInfoVO;
-import kr.gooroom.gpms.glm.service.DesktopAppVO;
-import kr.gooroom.gpms.glm.service.DesktopInfoService;
-import kr.gooroom.gpms.glm.service.DesktopInfoVO;
-import kr.gooroom.gpms.glm.service.DupClientVO;
-import kr.gooroom.gpms.glm.service.LogService;
-import kr.gooroom.gpms.glm.service.LoginHistoryVO;
-import kr.gooroom.gpms.glm.service.TokenService;
-import kr.gooroom.gpms.glm.service.UserTokenVO;
-import kr.gooroom.gpms.glm.service.UserVO;
-import kr.gooroom.gpms.job.CustomJobMaker;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Handles requests for the Gooroom's PAM service, authorization management
@@ -108,12 +85,11 @@ public class PamRestController {
 	 *            ModelMap @return Map result @throws
 	 */
 	@RequestMapping(value = "/checkClientCert", method = { RequestMethod.POST })
-	public @ResponseBody Map<?, ?> client(HttpServletRequest req, HttpServletResponse res, ModelMap model)
-			throws Exception {
+	public @ResponseBody Map<?, ?> client(HttpServletRequest req, HttpServletResponse res, ModelMap model) {
 
 		String clientCert = req.getHeader(Constant.H_CERT);
 		String clientIp = req.getHeader(Constant.H_REALIP);
-		String clientId = "";
+		String clientId;
 
 		CommonHeaderVO commonHeaderVo = new CommonHeaderVO();
 
@@ -134,15 +110,13 @@ public class PamRestController {
 
 			logger.debug("checkclient clientId[{}] \n cert{}", clientId, clientCert);
 		} else {
-			clientId = "empty";
-
 			logger.debug("checkclient clientCert is empty");
 
 			return CommonUtils.createResult(Constant.COMMON_MSG_FAIL, Constant.RSP_CODE_AUTH_FAIL,
 					MessageSourceHelper.getMessage("common.msg.auth.fail.empty.cert"), commonHeaderVo, null, model);
 		}
 
-		Map<String, Object> resultData = new HashMap<String, Object>();
+		Map<String, Object> resultData = new HashMap<>();
 		resultData.put("ID", clientId);
 		resultData.put("IP", clientIp);
 
@@ -196,11 +170,9 @@ public class PamRestController {
 								// check enable duplicate login this site
 								int typeDupLogin = authService.isEnableDuplicateLogin("");
 								if (typeDupLogin > 0) {
-									if (!isOnlyConfirm) {
-										// send mail and noti alarm
-										processMsgForDuplicateLogin(Math.abs(typeDupLogin), loginId, userVO.getUserEmail(),
-												dupClientList);
-									}
+									// send mail and noti alarm
+									processMsgForDuplicateLogin(Math.abs(typeDupLogin), loginId, userVO.getUserEmail(),
+											dupClientList);
 								} else {
 									// send mail and noti alarm
 									processMsgForDuplicateLogin(Math.abs(typeDupLogin), loginId, userVO.getUserEmail(),
@@ -234,9 +206,9 @@ public class PamRestController {
 						// get password rule(compexity) for this site
 						String passwordRule = authService.getPasswordRule("SITEID");
 						ObjectMapper mapper = new ObjectMapper();
-						Map<String, Object> passwordRuleVO = new HashMap<String, Object>();
+						Map<String, Object> passwordRuleVO;
 						// convert JSON string to Map
-						passwordRuleVO = mapper.readValue(passwordRule, new TypeReference<Map<String, Object>>() {
+						passwordRuleVO = mapper.readValue(passwordRule, new TypeReference<>() {
 						});
 						if (passwordRuleVO != null) {
 							resultData.put("passwordRule", passwordRuleVO);
@@ -258,14 +230,10 @@ public class PamRestController {
 				try {
 					System.out.println("-------------------MAP을 JSON String으로 변환-----------------------START");
 					ObjectMapper mapper = new ObjectMapper();
-					String json2 = ""; // json2 = mapper.writeValueAsString(map2);
+					String json2; // json2 = mapper.writeValueAsString(map2);
 					json2 = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(resultData);
 					System.out.println("resultData ::: \n" + json2);
 					System.out.println("-------------------MAP을 JSON String으로 변환-----------------------END");
-				} catch (JsonGenerationException e) {
-					e.printStackTrace();
-				} catch (JsonMappingException e) {
-					e.printStackTrace();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -446,15 +414,11 @@ public class PamRestController {
 			try {
 				System.out.println("-------------------[FINAL] MAP을 JSON String으로 변환-----------------------START");
 				ObjectMapper mapper = new ObjectMapper();
-				String json2 = ""; // json2 =
+				String json2 ; // json2 =
 				mapper.writeValueAsString(result.getResultData());
 				json2 = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(result.getResultData());
 				System.out.println("resultData ::: \n" + json2);
 				System.out.println("-------------------[FINAL] MAP을 JSON String으로 변환-----------------------END");
-			} catch (JsonGenerationException e) {
-				e.printStackTrace();
-			} catch (JsonMappingException e) {
-				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -482,13 +446,9 @@ public class PamRestController {
 			loginHistoryVO.setActTp(Constant.LOGIN_ACTION_TYPE_PAM_LOGIN);
 
 			// get client id if certificate is not wrong.
-			String clientId = null;
-			try {
-				clientId = ParseCertificate.parseCert(clientCert.replaceAll("[\n\t\r]", " "));
-				loginHistoryVO.setClientId(clientId);
-			} catch (Exception inex) {
-				clientId = null;
-			}
+			String clientId;
+			clientId = ParseCertificate.parseCert(clientCert.replaceAll("[\n\t\r]", " "));
+			loginHistoryVO.setClientId(clientId);
 			loginHistoryVO.setIp(clientIp);
 			loginHistoryVO.setResponseCd(Constant.COMMON_MSG_FAIL);
 			logService.insertLoginHistory(loginHistoryVO);
@@ -564,13 +524,9 @@ public class PamRestController {
 			loginHistoryVO.setUserId(loginId);
 			loginHistoryVO.setActTp(Constant.LOGIN_ACTION_TYPE_PAM_LOGIN);
 			// get client id if certificate is not wrong.
-			String clientId = null;
-			try {
-				clientId = ParseCertificate.parseCert(clientCert.replaceAll("[\n\t\r]", " "));
-				loginHistoryVO.setClientId(clientId);
-			} catch (Exception inex) {
-				clientId = null;
-			}
+			String clientId;
+			clientId = ParseCertificate.parseCert(clientCert.replaceAll("[\n\t\r]", " "));
+			loginHistoryVO.setClientId(clientId);
 			loginHistoryVO.setIp(clientIp);
 			loginHistoryVO.setResponseCd(Constant.COMMON_MSG_FAIL);
 			logService.insertLoginHistory(loginHistoryVO);
@@ -676,7 +632,7 @@ public class PamRestController {
 
 		String clientCert = req.getHeader(Constant.H_CERT);
 		String clientIp = req.getHeader(Constant.H_REALIP);
-		String clientId = "";
+		String clientId;
 
 		CommonHeaderVO commonHeaderVo = new CommonHeaderVO();
 
@@ -764,7 +720,7 @@ public class PamRestController {
 
 		String clientCert = req.getHeader(Constant.H_CERT);
 		String clientIp = req.getHeader(Constant.H_REALIP);
-		String clientId = "";
+		String clientId;
 
 		CommonHeaderVO commonHeaderVo = new CommonHeaderVO();
 
@@ -862,7 +818,7 @@ public class PamRestController {
 
 		String clientCert = req.getHeader(Constant.H_CERT);
 		String clientIp = req.getHeader(Constant.H_REALIP);
-		String clientId = "";
+		String clientId;
 
 		CommonHeaderVO commonHeaderVo = new CommonHeaderVO();
 
@@ -954,7 +910,7 @@ public class PamRestController {
 
 		String clientCert = req.getHeader(Constant.H_CERT);
 		String clientIp = req.getHeader(Constant.H_REALIP);
-		String clientId = "";
+		String clientId;
 
 		CommonHeaderVO commonHeaderVo = new CommonHeaderVO();
 
@@ -1105,7 +1061,7 @@ public class PamRestController {
 
 		try {
 
-			HashMap<String, String> map = new HashMap<String, String>();
+			HashMap<String, String> map = new HashMap<>();
 			map.put("login_id", loginId);
 			map.put("msg", "duplicate login");
 			// create client array - targets
@@ -1146,7 +1102,7 @@ public class PamRestController {
 
 		// DesktopInfo 생성
 		DesktopInfoVO desktopInfoVO = desktopInfoService.getDesktopInfoByName(confName);
-		Map<String, Object> resultData = new HashMap<String, Object>();
+		Map<String, Object> resultData = new HashMap<>();
 		if (desktopInfoVO != null) {
 
 			ArrayList<DesktopAppVO> appVOs = desktopInfoVO.getApps();

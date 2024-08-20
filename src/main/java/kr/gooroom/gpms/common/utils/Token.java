@@ -33,9 +33,9 @@ import java.util.TimeZone;
 
 public class Token {
 
-    private String salt;
-    private String issuer;
-    private long expInterval;
+    private final String salt;
+    private final String issuer;
+    private final long expInterval;
 
     public Token(String salt, String issuer, String expInterval) {
 	this.salt = salt;
@@ -49,9 +49,8 @@ public class Token {
      * @param String
      *            clientId, String userId
      * @return String
-     * @throws JwtException
-     */
-    public String genLoginToken(String clientId, String userId) throws Exception {
+	 */
+    public String genLoginToken(String clientId, String userId) {
 		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 		long nowMillis = cal.getTimeInMillis() + expInterval;
 		Date now = new Date(nowMillis);
@@ -70,9 +69,8 @@ public class Token {
      * @param String
      *            clientIp, String userId
      * @return String
-     * @throws JwtException
-     */
-    public String genOtpToken(String clientIp, String gcspId, String userId) throws Exception {
+	 */
+    public String genOtpToken(String clientIp, String gcspId, String userId) {
 		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 		long nowMillis = cal.getTimeInMillis() + expInterval;
 		Date now = new Date(nowMillis);
@@ -90,9 +88,8 @@ public class Token {
      * @param String
      *            token, String userId
      * @return String
-     * @throws JwtException
-     */
-    public String parseToken(String token, String userId) throws Exception {
+	 */
+    public String parseToken(String token, String userId) {
 		SecretKey secretKey = Keys.hmacShaKeyFor(DatatypeConverter.parseBase64Binary(userId + salt + issuer));
 		Claims claims = Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload();
 	return claims.getId();

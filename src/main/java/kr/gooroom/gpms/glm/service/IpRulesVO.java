@@ -16,13 +16,15 @@
 
 package kr.gooroom.gpms.glm.service;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("serial")
 public class IpRulesVO implements Serializable {
 
+	@Serial
+	private static final long serialVersionUID = -2864029866711879641L;
 	private boolean allAllow;
 	private List<String> allowIpList;
 	

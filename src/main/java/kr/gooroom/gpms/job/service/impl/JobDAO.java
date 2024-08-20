@@ -43,7 +43,7 @@ public class JobDAO extends SqlSessionMetaDAO {
 	 */
 	public long createJobMaster(JobVO jobVO) throws SQLException {
 
-		return (long) sqlSessionMeta.insert("insertJobMaster", jobVO);
+		return sqlSessionMeta.insert("insertJobMaster", jobVO);
 
 	}
 
@@ -56,7 +56,7 @@ public class JobDAO extends SqlSessionMetaDAO {
 	 */
 	public long createJobTarget(JobVO jobVO) throws SQLException {
 
-		return (long) sqlSessionMeta.insert("insertJobTarget", jobVO);
+		return sqlSessionMeta.insert("insertJobTarget", jobVO);
 
 	}
 

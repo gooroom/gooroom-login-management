@@ -42,9 +42,8 @@ public class TokenDAO extends SqlSessionMetaDAO {
      *
      * @param paramMap
      * @return
-     * @throws Exception
      */
-    public List<?> selectTokenList(Map<?, ?> paramMap) throws Exception {
+    public List<?> selectTokenList(Map<?, ?> paramMap) {
 	return sqlSessionMeta.selectList("tokenDAO.selectTokenList", paramMap);
     }
 
@@ -53,9 +52,8 @@ public class TokenDAO extends SqlSessionMetaDAO {
      *
      * @param paramMap
      * @return
-     * @throws Exception
      */
-    public UserTokenVO selectTokenInfo(Map<?, ?> paramMap) throws Exception {
+    public UserTokenVO selectTokenInfo(Map<?, ?> paramMap) {
 	return sqlSessionMeta.selectOne("tokenDAO.selectTokenInfo", paramMap);
     }
 
@@ -64,9 +62,8 @@ public class TokenDAO extends SqlSessionMetaDAO {
      *
      * @param tokenList
      * @return
-     * @throws Exception
      */
-    public int insertTokenInfo(Map<?, ?> tokenList) throws Exception {
+    public int insertTokenInfo(Map<?, ?> tokenList) {
 	return sqlSessionMeta.insert("tokenDAO.insertTokenInfo", tokenList);
     }
 
@@ -75,9 +72,8 @@ public class TokenDAO extends SqlSessionMetaDAO {
      *
      * @param tokenVO
      * @return
-     * @throws Exception
      */
-    public int updateTokenInfo(TokenVO tokenVO) throws Exception {
+    public int updateTokenInfo(TokenVO tokenVO) {
 	return sqlSessionMeta.update("tokenDAO.updateTokenInfo", tokenVO);
     }
 
@@ -88,9 +84,8 @@ public class TokenDAO extends SqlSessionMetaDAO {
      * 
      * @param paramMap
      * @return
-     * @throws Exception
      */
-    public int updateOtpTokenInfo(Map<?, ?> paramMap) throws Exception {
+    public int updateOtpTokenInfo(Map<?, ?> paramMap) {
 	return sqlSessionMeta.update("tokenDAO.updateOtpTokenInfo", paramMap);
     }
 
@@ -99,9 +94,8 @@ public class TokenDAO extends SqlSessionMetaDAO {
      *
      * @param paramMap
      * @return
-     * @throws Exception
      */
-    public int deleteToken(Map<?, ?> paramMap) throws Exception {
+    public int deleteToken(Map<?, ?> paramMap) {
 	return sqlSessionMeta.delete("tokenDAO.deleteToken", paramMap);
     }
 
@@ -110,9 +104,8 @@ public class TokenDAO extends SqlSessionMetaDAO {
      *
      * @param paramMap
      * @return
-     * @throws Exception
      */
-    public int deleteTokenByTokenId(Map<?, ?> paramMap) throws Exception {
+    public int deleteTokenByTokenId(Map<?, ?> paramMap) {
 	return sqlSessionMeta.delete("tokenDAO.deleteTokenByTokenId", paramMap);
     }
 }

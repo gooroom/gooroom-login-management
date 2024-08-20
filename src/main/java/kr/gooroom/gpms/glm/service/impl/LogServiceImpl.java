@@ -31,17 +31,17 @@ public class LogServiceImpl implements LogService {
     private LogDAO logDAO;
 
     @Override
-    public int insertLoginHistory(LoginHistoryVO loginHistoryVO) throws Exception {
+    public int insertLoginHistory(LoginHistoryVO loginHistoryVO) {
 	return logDAO.insertLoginHistory(loginHistoryVO);
     }
 
     @Override
-    public int insertUserHistory(String loginId) throws Exception {
+    public int insertUserHistory(String loginId) {
 	return logDAO.insertUserHistory(loginId);
     }
 
     @Override
-    public int insertOrUpdateUserClientUseHistory(UserClientUseHistoryVO userClientUseHistoryVO) throws Exception {
+    public int insertOrUpdateUserClientUseHistory(UserClientUseHistoryVO userClientUseHistoryVO) {
         return logDAO.insertOrUpdateClientUseHist(userClientUseHistoryVO);
     }
 

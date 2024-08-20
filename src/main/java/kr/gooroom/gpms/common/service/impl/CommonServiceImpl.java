@@ -47,20 +47,16 @@ public class CommonServiceImpl implements CommonService {
     	List<CtrlItemVO> re = ctrlItemDAO.selectAvailableIpRule(clientId);
     	if(re != null && re.size() > 0) {
     		IpRulesVO rulesVO = new IpRulesVO();
-    		ArrayList<String> list = new ArrayList<String>();
+    		ArrayList<String> list = new ArrayList<>();
     		for(CtrlItemVO vo : re) {
     			if("WHITEIPALL".equals(vo.getPropNm())) {
-    				if("true".equalsIgnoreCase(vo.getPropValue())) {
-    					rulesVO.setAllAllow(true);
-    				} else {
-    					rulesVO.setAllAllow(false);
-    				}
+					rulesVO.setAllAllow("true".equalsIgnoreCase(vo.getPropValue()));
     			} else if("WHITEIPS".equals(vo.getPropNm())) {
     				list.add(vo.getPropValue());
     			}
     		}
     		
-    		if(list != null && list.size() > 0) {
+    		if(list.size() > 0) {
     			rulesVO.setAllowIpList(list);
     		}
     		
@@ -87,7 +83,7 @@ public class CommonServiceImpl implements CommonService {
 				// check, compare client ip
 				List<String> ipList = ips.getAllowIpList();
 				for(String iprule : ipList) {
-					if(iprule.indexOf("-") > -1) {
+					if(iprule.contains("-")) {
 						String[] ip_period = iprule.split("-");
 						long fromValue = ipToLong(ip_period[0]); 
 						long toValue = ipToLong(ip_period[1]); 

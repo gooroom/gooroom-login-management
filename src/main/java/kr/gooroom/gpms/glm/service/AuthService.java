@@ -47,7 +47,7 @@ public interface AuthService {
      * @return
      * @throws Exception
      */
-    public UserVO checkLoginByUserId(String loginId, String userPw, boolean isLoginService, String clientId) throws Exception;
+    UserVO checkLoginByUserId(String loginId, String userPw, boolean isLoginService, String clientId) throws Exception;
 
     /**
      * loginToken 인증
@@ -59,7 +59,7 @@ public interface AuthService {
      * @return
      * @throws Exception
      */
-    public UserTokenVO checkLoginByLoginToken(String clientId, String loginToken) throws Exception;
+    UserTokenVO checkLoginByLoginToken(String clientId, String loginToken) throws Exception;
 
     /**
      * 사용자 인증 (OTP 토큰)
@@ -71,7 +71,7 @@ public interface AuthService {
      * @return
      * @throws Exception
      */
-    public UserVO checkLoginByOtpToken(String otpToken, String gcspId) throws Exception;
+    UserVO checkLoginByOtpToken(String otpToken, String gcspId) throws Exception;
 
     /**
      * 사용자 목록 정보
@@ -81,7 +81,7 @@ public interface AuthService {
      * @return
      * @throws Exception
      */
-    public List<?> getUserList(List<String> userList, String gcspId) throws Exception;
+    List<?> getUserList(List<String> userList, String gcspId) throws Exception;
 
     /**
      * 로그 아웃
@@ -95,7 +95,7 @@ public interface AuthService {
      * @return
      * @throws Exception
      */
-    public int logout(String userId, String clientId, String loginToken) throws Exception;
+    int logout(String userId, String clientId, String loginToken) throws Exception;
 
     /**
      * PAM 용 사용자 토큰(login, otp) 및 데스크탑 환경 생성
@@ -106,7 +106,7 @@ public interface AuthService {
      * @return
      * @throws Exception
      */
-    public Map<String, Object> setPamTokenAndDesktopInfo(UserVO userVO, String clientId, String clientIp)
+    Map<String, Object> setPamTokenAndDesktopInfo(UserVO userVO, String clientId, String clientIp)
 	    throws Exception;
 
     /**
@@ -117,7 +117,7 @@ public interface AuthService {
      * @return
      * @throws Exception
      */
-    public GcspVO checkGcspInfo(String clientId, String clientIp) throws Exception;
+    GcspVO checkGcspInfo(String clientId, String clientIp) throws Exception;
 
     /**
      * GCSP 용 로그인 생성
@@ -128,7 +128,7 @@ public interface AuthService {
      * @param otpToken
      * @return
      */
-    public Map<String, Object> setGcspAuth(UserVO userVO, String clientId, String clientIp, String otpToken);
+    Map<String, Object> setGcspAuth(UserVO userVO, String clientId, String clientIp, String otpToken);
 
     /**
      * 사용자 비밀번호 변경
@@ -138,7 +138,7 @@ public interface AuthService {
      * @return
      * @throws Exception
      */
-    public int changePassword(String loginId, String newPassword) throws Exception;
+    int changePassword(String loginId, String newPassword) throws Exception;
 
     /**
      * 사용자 이름 변경
@@ -148,7 +148,7 @@ public interface AuthService {
      * @return
      * @throws Exception
      */
-    public int changeUserNm(String loginId, String newUserNm) throws Exception;
+    int changeUserNm(String loginId, String newUserNm) throws Exception;
 
     /**
      * 사용자 로그인 시간 갱신
@@ -160,7 +160,7 @@ public interface AuthService {
      * @return
      * @throws Exception
      */
-    public int updateLoginDateTime(String loginId, boolean isFirstLogin, String clientId) throws Exception;
+    int updateLoginDateTime(String loginId, boolean isFirstLogin, String clientId) throws Exception;
 
     /**
      * Passphrase 변경 또는 등록
@@ -171,7 +171,7 @@ public interface AuthService {
      * @return
      * @throws Exception
      */
-    public int changePassphrase(String loginId, String clientId, String passphrase) throws Exception;
+    int changePassphrase(String loginId, String clientId, String passphrase) throws Exception;
     
     /**
      * 접속한 계정으로 온라인중인 단말 리스트 조회 
@@ -180,7 +180,7 @@ public interface AuthService {
      * @return
      * @throws Exception
      */
-    public List<?> getOnlineClientsByUser(String loginId) throws Exception;
+    List<?> getOnlineClientsByUser(String loginId) throws Exception;
 
     /**
      * 비밀번호 규정 가져오기 
@@ -189,7 +189,7 @@ public interface AuthService {
      * @return
      * @throws Exception
      */
-    public String getPasswordRule(String siteId) throws Exception;
+    String getPasswordRule(String siteId) throws Exception;
 
     /**
      * 중복 로그인 가능 여부 조회 
@@ -198,7 +198,7 @@ public interface AuthService {
      * @return
      * @throws Exception
      */
-    public int isEnableDuplicateLogin(String siteId) throws Exception;
+    int isEnableDuplicateLogin(String siteId) throws Exception;
 
 }
 

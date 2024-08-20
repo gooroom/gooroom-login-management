@@ -16,6 +16,7 @@
 
 package kr.gooroom.gpms.common.service;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -28,6 +29,7 @@ import java.io.Serializable;
 
 public class CommonHeaderVO implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -4276539527633969279L;
 
     private String result;
