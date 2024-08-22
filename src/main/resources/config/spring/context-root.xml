@@ -22,8 +22,8 @@
         <constructor-arg ref="messageSource" />	
 	</bean>
 
-	<bean id="propertyConfigurer" class="org.jasypt.spring31.properties.EncryptablePropertyPlaceholderConfigurer">
-		<constructor-arg ref="configurationEncryptor" />
+	<!-- Properties Files -->
+	<bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
 		<property name="locations">
 			<list>
 				<value>classpath:/properties/db.properties</value>
@@ -37,28 +37,16 @@
 		<property name="driverClassName" value="${metadb.driverClassName}" />
 		<property name="url" value="${metadb.url}" />
 		<property name="username" value="${metadb.username}" />
-		<property name="password" value="${metadb.password}" />
+		<property name="password" value="#{gpmsEncryptor.decrypt('${metadb.password1}', '${metadb.password2}', '${metadb.salt}')}" />
 		<property name="initialSize" value="${metadb.initialSize}" />
 		<property name="maxTotal" value="${metadb.maxActive}" />
 		<property name="maxIdle" value="${metadb.maxIdle}" />
 		<property name="minIdle" value="${metadb.minIdle}" />
-		<!--
-		<property name="maxWait" value="${metadb.maxWait}" />
-		-->
-		<property name="poolPreparedStatements" value="true"></property>
-		<property name="maxOpenPreparedStatements" value="50"></property>
-		<property name="validationQuery" value="select 1" ></property>
+		<property name="poolPreparedStatements" value="true"/>
+		<property name="maxOpenPreparedStatements" value="50"/>
+		<property name="validationQuery" value="select 1" />
 	</bean>
 
-	<bean id="environmentVariablesConfiguration" class="org.jasypt.encryption.pbe.config.EnvironmentStringPBEConfig">
-		<property name="algorithm" value="PBEWITHMD5ANDDES" />
-		<property name="password" value="GOOROOM_GPMS_PASS_KEY" />
-	</bean>  
-       
-	<bean id="configurationEncryptor" class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">  
-        <property name="config" ref="environmentVariablesConfiguration" />  
-	</bean>  
-	
 	<bean id="sqlSessionFactoryMeta" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSourceMeta" />
 		<property name="configLocation"	value="classpath:config/mysql/mybatis-config-meta.xml" />
@@ -83,5 +71,10 @@
 		<constructor-arg  value="2000"/>
 		<constructor-arg  value="PBKDF2WithHmacSHA256"/>
 	</bean>
-		
+
+	<bean id="gpmsEncryptor" class="kr.gooroom.encryptor.AESConfig">
+		<constructor-arg ref="configurationEncryptor" />
+	</bean>
+
+	<bean id="configurationEncryptor" class="kr.gooroom.encryptor.AESEncryptor"/>
 </beans>
